@@ -1,0 +1,1667 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
+        <title>JS Playground</title>
+        <link rel="icon" type="image/png" href="https://img.icons8.com/nolan/64/forward.png" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/gruvbox-dark.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css"
+        />
+        <style>
+            :root {
+                --b0: #0e1520;
+                --b0s: #121c2e;
+                --b1: #1a2540;
+                --b2: #253050;
+                --b3: #334068;
+                --b4: #4d6080;
+                --f1: #8a9ab0;  /* dinaikkan dari #656f7d — teks utama lebih jelas */
+                --f2: #b8d0e8;  /* dinaikkan dari #9bbad8 */
+                --f3: #90aac8;  /* dinaikkan dari #7090b0 */
+                --f4: #6080a0;  /* dinaikkan dari #4d6880 */
+                /* ── Ocean: ungu-teal-rose susu, kontras cukup ── */
+                --red:   #d09098;  /* dusty rose, lebih terang */
+                --green: #72b89e;  /* sage teal */
+                --yel:   #a898d8;  /* soft indigo */
+                --blu:   #82b0cc;  /* slate blue */
+                --pur:   #a090c8;  /* dusty violet */
+                --aqu:   #72aab8;  /* muted teal */
+                --ora:   #c090a8;  /* dusty mauve */
+                --gry:   #607090;
+                --acc: var(--blu);
+                --rad: 6px;
+            }
+            /* ── Tema Ocean (default): ungu-teal-rose susu ── */
+
+            /* ── Tema Ember: rose-mauve-berry susu, hangat tanpa kuning/oranye ── */
+            body.theme-ember {
+                --red:   #d89098;  /* dusty crimson */
+                --green: #90b098;  /* sage muted */
+                --yel:   #c088b8;  /* berry mauve */
+                --blu:   #b090c8;  /* dusty lavender */
+                --pur:   #c880b0;  /* dusty fuchsia */
+                --aqu:   #80a0b0;  /* slate teal */
+                --ora:   #d890a0;  /* rose */
+                --gry:   #707080;
+                --acc: var(--pur);
+            }
+            /* Override warna variable & property untuk Ember */
+            body.theme-ember .cm-s-gruvbox-dark .cm-variable {
+                color: #c0a0b8;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-variable-2 {
+                color: #b090c8;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-property {
+                color: #b898c0;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-keyword {
+                color: #c880b8;
+                font-weight: 600;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-def {
+                color: #c088b8;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-string,
+            body.theme-ember .cm-s-gruvbox-dark .cm-string-2 {
+                color: #90b098;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-number,
+            body.theme-ember .cm-s-gruvbox-dark .cm-atom {
+                color: #d890a0;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-builtin,
+            body.theme-ember .cm-s-gruvbox-dark .cm-meta,
+            body.theme-ember .cm-s-gruvbox-dark .cm-variable-3 {
+                color: #80a0b0;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-comment {
+                color: #606070;
+                font-style: italic;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-operator,
+            body.theme-ember .cm-s-gruvbox-dark .cm-qualifier,
+            body.theme-ember .cm-s-gruvbox-dark .cm-attribute {
+                color: #c890a8;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-bracket {
+                color: #9090a0;
+            }
+            body.theme-ember .cm-s-gruvbox-dark .cm-tag {
+                color: #d89098;
+            }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                font-family:
+                    ui-monospace, "SF Mono", "Fira Code", "Cascadia Code",
+                    Consolas, monospace;
+                background: var(--b0);
+                color: var(--f1);
+                height: 100dvh;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                -webkit-tap-highlight-color: transparent;
+            }
+            #app {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                min-height: 0;
+            }
+
+            /* ── Toolbar ── */
+            #tb {
+                display: flex;
+                align-items: center;
+                gap: 3px;
+                padding: 6px 8px;
+                background: var(--b0s);
+                border-bottom: 1px solid var(--b2);
+                flex-wrap: wrap;
+                flex-shrink: 0;
+            }
+            .sp {
+                flex: 1 1 auto;
+                min-width: 4px;
+            }
+            .sep {
+                width: 1px;
+                height: 18px;
+                background: var(--b2);
+                margin: 0 3px;
+                flex-shrink: 0;
+            }
+            .btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 26px;
+                height: 26px;
+                flex-shrink: 0;
+                border-radius: var(--rad);
+                border: 1px solid transparent;
+                background: transparent;
+                color: var(--f3);
+                cursor: pointer;
+                transition:
+                    background 0.12s,
+                    color 0.12s,
+                    border-color 0.12s;
+            }
+            .btn svg {
+                width: 15px;
+                height: 15px;
+                pointer-events: none;
+            }
+            .btn:hover {
+                background: var(--b1);
+                color: var(--f1);
+            }
+            .btn:active {
+                transform: translateY(1px);
+            }
+            .btn.on {
+                background: var(--b2);
+                color: var(--acc);
+                border-color: var(--b3);
+            }
+            .btn.run {
+                color: var(--green);
+            }
+            .btn.run:hover {
+                background: var(--b1);
+                color: var(--green);
+            }
+
+            /* ── Panels ── */
+            #panels {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+            #ep {
+                flex: 0 0 60%;
+                min-height: 0;
+                overflow: hidden;
+            }
+            #ed {
+                height: 100%;
+            }
+            #dv {
+                flex: 0 0 6px;
+                background: var(--b1);
+                cursor: row-resize;
+                position: relative;
+                touch-action: none;
+            }
+            #dv::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 32px;
+                height: 3px;
+                border-radius: 2px;
+                background: var(--b3);
+            }
+            #dv:hover,
+            #dv.drag {
+                background: var(--b2);
+            }
+            #dv:hover::after,
+            #dv.drag::after {
+                background: var(--acc);
+            }
+            #cp {
+                flex: 0 0 40%;
+                min-height: 0;
+                display: flex;
+                flex-direction: column;
+                background: var(--b0);
+                overflow: hidden;
+            }
+            #cl {
+                flex: 1;
+                overflow-y: auto;
+                padding: 2px 0;
+            }
+            #cf {
+                flex-shrink: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 10px 7px;
+                font-size: 10px;
+                color: var(--f4);
+                border-top: 1px solid var(--b1);
+                background: var(--b0s);
+                font-variant-numeric: tabular-nums;
+                gap: 8px;
+                line-height: 0px;
+            }
+            #cf .fg {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                overflow: hidden;
+                white-space: nowrap;
+                transform: translateY(-3px);
+            }
+            #cf svg {
+                width: 11px;
+                height: 11px;
+                flex-shrink: 0;
+                opacity: 0.65;
+            }
+
+            /* ── CodeMirror ── */
+            .CodeMirror {
+                height: 100% !important;
+                font-size: 14px;
+                line-height: 1.55;
+            }
+            .cm-s-gruvbox-dark.CodeMirror,
+            .cm-s-gruvbox-light.CodeMirror {
+                background: var(--b0);
+                color: var(--f1);
+            }
+            .cm-s-gruvbox-dark .CodeMirror-gutters,
+            .cm-s-gruvbox-light .CodeMirror-gutters {
+                background: var(--b0);
+                border-right: 1px solid var(--b1);
+            }
+            .cm-s-gruvbox-dark .CodeMirror-linenumber,
+            .cm-s-gruvbox-light .CodeMirror-linenumber {
+                color: var(--b4);
+            }
+            .cm-s-gruvbox-dark .cm-keyword,
+            .cm-s-gruvbox-light .cm-keyword {
+                color: var(--pur);
+                font-weight: 600;
+            }
+            .cm-s-gruvbox-dark .cm-atom,
+            .cm-s-gruvbox-light .cm-atom {
+                color: var(--ora);
+            }
+            .cm-s-gruvbox-dark .cm-number,
+            .cm-s-gruvbox-light .cm-number {
+                color: var(--ora);
+            }
+            .cm-s-gruvbox-dark .cm-def,
+            .cm-s-gruvbox-light .cm-def {
+                color: var(--yel);
+            }
+            .cm-s-gruvbox-dark .cm-variable,
+            .cm-s-gruvbox-light .cm-variable {
+                color: #90b8cc;
+            }
+            .cm-s-gruvbox-dark .cm-variable-2,
+            .cm-s-gruvbox-light .cm-variable-2 {
+                color: var(--blu);
+            }
+            .cm-s-gruvbox-dark .cm-variable-3,
+            .cm-s-gruvbox-light .cm-variable-3 {
+                color: var(--aqu);
+            }
+            .cm-s-gruvbox-dark .cm-property,
+            .cm-s-gruvbox-light .cm-property {
+                color: #80a8c0;
+            }
+            .cm-s-gruvbox-dark .cm-operator,
+            .cm-s-gruvbox-light .cm-operator {
+                color: var(--yel);
+            }
+            .cm-s-gruvbox-dark .cm-comment,
+            .cm-s-gruvbox-light .cm-comment {
+                color: var(--gry);
+                font-style: italic;
+            }
+            .cm-s-gruvbox-dark .cm-string,
+            .cm-s-gruvbox-light .cm-string {
+                color: var(--green);
+            }
+            .cm-s-gruvbox-dark .cm-string-2,
+            .cm-s-gruvbox-light .cm-string-2 {
+                color: var(--green);
+            }
+            .cm-s-gruvbox-dark .cm-meta,
+            .cm-s-gruvbox-light .cm-meta {
+                color: var(--aqu);
+            }
+            .cm-s-gruvbox-dark .cm-qualifier,
+            .cm-s-gruvbox-light .cm-qualifier {
+                color: var(--yel);
+            }
+            .cm-s-gruvbox-dark .cm-builtin,
+            .cm-s-gruvbox-light .cm-builtin {
+                color: var(--aqu);
+            }
+            .cm-s-gruvbox-dark .cm-bracket,
+            .cm-s-gruvbox-light .cm-bracket {
+                color: var(--f3);
+            }
+            .cm-s-gruvbox-dark .cm-tag,
+            .cm-s-gruvbox-light .cm-tag {
+                color: var(--red);
+            }
+            .cm-s-gruvbox-dark .cm-attribute,
+            .cm-s-gruvbox-light .cm-attribute {
+                color: var(--yel);
+            }
+            .cm-s-gruvbox-dark .cm-error,
+            .cm-s-gruvbox-light .cm-error {
+                color: var(--red);
+                text-decoration: underline wavy;
+            }
+            .cm-s-gruvbox-dark .CodeMirror-cursor,
+            .cm-s-gruvbox-light .CodeMirror-cursor {
+                border-left: 2px solid var(--f1);
+            }
+            .cm-s-gruvbox-dark .CodeMirror-selected,
+            .cm-s-gruvbox-light .CodeMirror-selected {
+                background: rgba(136, 112, 184, 0.28);  /* ungu muted Ocean */
+            }
+            .cm-s-gruvbox-dark .CodeMirror-activeline-background,
+            .cm-s-gruvbox-light .CodeMirror-activeline-background {
+                background: rgba(106, 154, 191, 0.09);  /* biru slate halus */
+            }
+            /* Selection Ember: rose-mauve */
+            body.theme-ember .cm-s-gruvbox-dark .CodeMirror-selected {
+                background: rgba(176, 104, 160, 0.28);  /* fuchsia mauve muted */
+            }
+            body.theme-ember .cm-s-gruvbox-dark .CodeMirror-activeline-background {
+                background: rgba(192, 120, 136, 0.09);  /* rose halus */
+            }
+            .cm-s-gruvbox-dark .CodeMirror-matchingbracket,
+            .cm-s-gruvbox-light .CodeMirror-matchingbracket {
+                color: var(--green) !important;
+                font-weight: bold;
+                text-decoration: none;
+            }
+            .CodeMirror-foldmarker {
+                color: var(--yel);
+                text-shadow: none;
+                font-family: inherit;
+                padding: 0 2px;
+            }
+            .CodeMirror-foldgutter-open,
+            .CodeMirror-foldgutter-folded {
+                color: var(--f4);
+                cursor: pointer;
+            }
+            .CodeMirror-foldgutter-open:after {
+                content: "\25BE";
+            }
+            .CodeMirror-foldgutter-folded:after {
+                content: "\25B8";
+            }
+            .CodeMirror-hints {
+                background: var(--b0s);
+                border: 1px solid var(--b2);
+                color: var(--f1);
+                font-family: inherit;
+                font-size: 13px;
+                border-radius: var(--rad);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+                padding: 3px;
+                z-index: 50;
+            }
+            .CodeMirror-hint {
+                padding: 3px 10px;
+                border-radius: 4px;
+                color: var(--f2);
+                white-space: nowrap;
+            }
+            li.CodeMirror-hint-active {
+                background: var(--b2);
+                color: var(--acc);
+            }
+
+            /* ── Console rows ── */
+            .lr {
+                border-bottom: 1px solid var(--b1);
+            }
+            .ls {
+                display: flex;
+                align-items: flex-start;
+                gap: 7px;
+                padding: 5px 8px;
+                font-size: 12.5px;
+                cursor: pointer;
+            }
+            .ls:hover {
+                background: var(--b0s);
+            }
+            .ld {
+                flex-shrink: 0;
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                margin-top: 1px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 9px;
+                font-weight: 700;
+            }
+            .llog .ld {
+                background: var(--b2);
+                color: var(--f3);
+            }
+            .linfo .ld {
+                background: rgba(255, 94, 188, 0.18);
+                color: var(--blu);
+            }
+            .lwarn .ld {
+                background: rgba(232, 201, 122, 0.18);
+                color: var(--yel);
+            }
+            .lerror .ld {
+                background: rgba(255, 110, 110, 0.18);
+                color: var(--red);
+            }
+            .lp {
+                flex: 1;
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                color: var(--f2);
+            }
+            .lerror .lp {
+                color: var(--red);
+            }
+            .lwarn .lp {
+                color: var(--yel);
+            }
+            .lr.exp .lp {
+                white-space: normal;
+            }
+            .ldt {
+                display: none;
+                padding: 2px 10px 10px 31px;
+                font-size: 12px;
+                color: var(--f2);
+            }
+            .lr.exp .ldt {
+                display: block;
+            }
+
+            /* ── Object tree ── */
+            .tn {
+                line-height: 1.65;
+            }
+            .th {
+                display: flex;
+                align-items: baseline;
+                gap: 3px;
+                cursor: pointer;
+                user-select: none;
+            }
+            .tt {
+                color: var(--f4);
+                width: 11px;
+                display: inline-block;
+                font-size: 9px;
+                flex-shrink: 0;
+            }
+            .tl {
+                color: var(--f3);
+            }
+            .tc {
+                margin-left: 14px;
+                padding-left: 7px;
+                border-left: 1px dashed var(--b2);
+            }
+            .te {
+                display: flex;
+                gap: 3px;
+                flex-wrap: wrap;
+            }
+            .tk {
+                color: var(--aqu);
+                flex-shrink: 0;
+            }
+            .tstr {
+                color: var(--green);
+            }
+            .tnum,
+            .tbig {
+                color: var(--ora);
+            }
+            .tbool {
+                color: var(--pur);
+            }
+            .tnul,
+            .tund {
+                color: var(--gry);
+                font-style: italic;
+            }
+            .tfn {
+                color: var(--blu);
+            }
+            .tsym {
+                color: var(--aqu);
+            }
+            .terr {
+                color: var(--red);
+                font-weight: 700;
+            }
+            .trx,
+            .tdate {
+                color: var(--yel);
+            }
+            .tstack {
+                color: var(--f4);
+                font-size: 11px;
+                white-space: pre-wrap;
+                margin-top: 2px;
+            }
+
+            /* ── Scrollbars ── */
+            #cl::-webkit-scrollbar,
+            .CodeMirror-vscrollbar,
+            .CodeMirror-hscrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            #cl::-webkit-scrollbar-track {
+                background: var(--b0);
+            }
+            #cl::-webkit-scrollbar-thumb,
+            .CodeMirror-vscrollbar::-webkit-scrollbar-thumb {
+                background: var(--b2);
+                border-radius: 4px;
+            }
+            #cl::-webkit-scrollbar-thumb:hover {
+                background: var(--b3);
+            }
+
+            @media (max-width: 480px) {
+                .btn {
+                    width: 28px;
+                    height: 28px;
+                }
+                .CodeMirror {
+                    font-size: 13px;
+                }
+                #cf {
+                    font-size: 10px;
+                }
+                .ls,
+                .ldt {
+                    font-size: 12px;
+                }
+            }
+        </style>
+    </head>
+    <body class="theme-ember">
+        <div id="app">
+            <div id="tb">
+                <button class="btn run" id="brun" title="Run (Ctrl+Enter)">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M6 4l13 8-13 8z" />
+                    </svg>
+                </button>
+                <button class="btn on" id="baut" title="Auto run">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" />
+                        <path d="M21 3v5h-5" />
+                    </svg>
+                </button>
+                <button class="btn" id="bfmt" title="Rapikan kode">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M5 3v4M3 5h4M13 3l1.6 4.7L19 9l-4.4 1.6L13 15l-1.6-4.4L7 9l4.4-1.6z"
+                        />
+                        <path d="M6 17v4M4 19h4" />
+                    </svg>
+                </button>
+                <div class="sep"></div>
+                <button class="btn on" id="bln" title="Nomor baris">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <line x1="5" y1="9" x2="19" y2="9" />
+                        <line x1="5" y1="15" x2="19" y2="15" />
+                        <line x1="9" y1="4" x2="7" y2="20" />
+                        <line x1="17" y1="4" x2="15" y2="20" />
+                    </svg>
+                </button>
+                <button class="btn" id="bww" title="Word Wrap">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M3 6h18" />
+                        <path d="M3 12h13a2 2 0 0 1 0 4h-3" />
+                        <polyline points="11 14 9 16 11 18" />
+                        <path d="M3 18h7" />
+                    </svg>
+                </button>
+                <div class="sp"></div>
+                <button class="btn" id="bclr" title="Bersihkan console">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline points="3 6 5 6 21 6" />
+                        <path
+                            d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"
+                        />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                </button>
+                <button class="btn on" id="bthm" title="Ganti tema warna kode">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <circle cx="13.5" cy="6.5" r="2.5"/>
+                        <circle cx="17.5" cy="10.5" r="2.5"/>
+                        <circle cx="8.5" cy="7.5" r="2.5"/>
+                        <circle cx="6.5" cy="12.5" r="2.5"/>
+                        <path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                    </svg>
+                </button>
+                <button class="btn on" id="brig" title="Kunci Scroll Log">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <!-- pin / tack icon -->
+                        <line x1="12" y1="17" x2="12" y2="22"/>
+                        <path d="M5 17h14v-2a7 7 0 0 0-7-7 7 7 0 0 0-7 7v2z"/>
+                        <line x1="12" y1="3" x2="12" y2="8"/>
+                        <circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div id="panels">
+                <div id="ep"><div id="ed"></div></div>
+                <div id="dv"></div>
+                <div id="cp">
+                    <div id="cl"></div>
+                    <div id="cf">
+                        <div class="fg">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span id="ft">--:--:--.---</span>
+                        </div>
+                        <div class="fg">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                                />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            <span id="fd">0.000 ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <iframe id="sb" style="display: none" sandbox="allow-scripts"></iframe>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/comment-fold.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.0.3/standalone.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.0.3/parser-babel.min.js"></script>
+
+        <script>
+            (function () {
+                "use strict";
+
+                var state = {
+                    autoRun: true,
+                    rigid: true,
+                    wordWrap: false,
+                    ember: true,
+                };
+                var arTimer = null,
+                    wdTimer = null,
+                    lastRun = 0;
+
+                var STARTER = [
+                    "// JS Playground — Dark Blue Edition",
+                    "// Tekan ▶ atau Ctrl+Enter untuk eksekusi",
+                    "",
+                    "const state = {",
+                    '  user: { name: "Fajar", level: 2 },',
+                    '  inventory: ["sword", "shield", "potion"],',
+                    "};",
+                    "",
+                    'console.log("State awal:", state);',
+                    "",
+                    "const nextState = {",
+                    "  ...state,",
+                    "  user: { ...state.user, level: state.user.level + 1 },",
+                    "};",
+                    "",
+                    'console.log("State setelah update:", nextState);',
+                    'console.log("Immutability check:", state.user.level !== nextState.user.level);',
+                    "",
+                    "for (let i = 1; i <= 3; i++) {",
+                    '  console.log("Loop ke-" + i, i * i);',
+                    "}",
+                ].join("\n");
+
+                /* ── Autocomplete ── */
+                function ownNames(obj) {
+                    try {
+                        return Object.getOwnPropertyNames(obj).filter(
+                            function (n) {
+                                return (
+                                    !/^\d+$/.test(n) &&
+                                    n !== "caller" &&
+                                    n !== "arguments" &&
+                                    n.indexOf("__") !== 0
+                                );
+                            },
+                        );
+                    } catch (e) {
+                        return [];
+                    }
+                }
+                var MD = {
+                    Array: ownNames(Array).concat(ownNames(Array.prototype)),
+                    String: ownNames(String).concat(ownNames(String.prototype)),
+                    Object: ownNames(Object).concat(ownNames(Object.prototype)),
+                    Number: ownNames(Number).concat(ownNames(Number.prototype)),
+                    Boolean: ownNames(Boolean.prototype),
+                    Math: ownNames(Math),
+                    JSON: ownNames(JSON),
+                    console: ownNames(console),
+                    Promise: ownNames(Promise).concat(
+                        ownNames(Promise.prototype),
+                    ),
+                    Map: ownNames(Map.prototype),
+                    Set: ownNames(Set.prototype),
+                    Date: ownNames(Date).concat(ownNames(Date.prototype)),
+                    RegExp: ownNames(RegExp.prototype),
+                    Function: ownNames(Function.prototype),
+                    Symbol: ownNames(Symbol),
+                    Error: ownNames(Error.prototype),
+                };
+                var GM = (function () {
+                    var s = {},
+                        o = [];
+                    []
+                        .concat(
+                            ownNames(Array.prototype),
+                            ownNames(Object.prototype),
+                            ownNames(String.prototype),
+                            ownNames(Number.prototype),
+                            ownNames(Function.prototype),
+                        )
+                        .forEach(function (n) {
+                            if (!s[n]) {
+                                s[n] = 1;
+                                o.push(n);
+                            }
+                        });
+                    return o;
+                })();
+                var GN = [
+                    "Array",
+                    "Object",
+                    "String",
+                    "Number",
+                    "Boolean",
+                    "Math",
+                    "JSON",
+                    "console",
+                    "Promise",
+                    "Map",
+                    "Set",
+                    "WeakMap",
+                    "WeakSet",
+                    "Date",
+                    "RegExp",
+                    "Symbol",
+                    "Error",
+                    "TypeError",
+                    "RangeError",
+                    "SyntaxError",
+                    "parseInt",
+                    "parseFloat",
+                    "isNaN",
+                    "isFinite",
+                    "NaN",
+                    "Infinity",
+                    "undefined",
+                    "globalThis",
+                    "Function",
+                    "structuredClone",
+                ];
+                var KW = [
+                    "break",
+                    "case",
+                    "catch",
+                    "class",
+                    "const",
+                    "continue",
+                    "debugger",
+                    "default",
+                    "delete",
+                    "do",
+                    "else",
+                    "export",
+                    "extends",
+                    "finally",
+                    "for",
+                    "function",
+                    "if",
+                    "import",
+                    "in",
+                    "instanceof",
+                    "let",
+                    "new",
+                    "return",
+                    "super",
+                    "switch",
+                    "this",
+                    "throw",
+                    "try",
+                    "typeof",
+                    "var",
+                    "void",
+                    "while",
+                    "with",
+                    "yield",
+                    "async",
+                    "await",
+                    "of",
+                    "static",
+                    "get",
+                    "set",
+                    "true",
+                    "false",
+                    "null",
+                ];
+
+                function scanIds(cm) {
+                    var t = cm.getValue(),
+                        ids = {},
+                        re =
+                            /\b(?:const|let|var|function\*?|class)\s+([A-Za-z_$][\w$]*)/g,
+                        m;
+                    while ((m = re.exec(t))) ids[m[1]] = 1;
+                    var ra = /\(([^()]*)\)\s*=>/g;
+                    while ((m = ra.exec(t))) {
+                        m[1].split(",").forEach(function (p) {
+                            var n = p
+                                .trim()
+                                .split(/[=:]/)[0]
+                                .trim()
+                                .replace(/[{}\[\].]/g, "");
+                            if (/^[A-Za-z_$][\w$]*$/.test(n)) ids[n] = 1;
+                        });
+                    }
+                    return Object.keys(ids);
+                }
+                function getTok(cm, cur) {
+                    var line = cm.getLine(cur.line),
+                        s = cur.ch,
+                        e = cur.ch;
+                    while (s > 0 && /[\w$]/.test(line.charAt(s - 1))) s--;
+                    while (e < line.length && /[\w$]/.test(line.charAt(e))) e++;
+                    var w = line.slice(s, e),
+                        dot = false,
+                        base = "";
+                    if (s > 0 && line.charAt(s - 1) === ".") {
+                        dot = true;
+                        var be = s - 1,
+                            bs = be;
+                        while (bs > 0 && /[\w$]/.test(line.charAt(bs - 1)))
+                            bs--;
+                        base = line.slice(bs, be);
+                    }
+                    return {
+                        start: s,
+                        end: e,
+                        word: w,
+                        dotBefore: dot,
+                        base: base,
+                        line: cur.line,
+                    };
+                }
+                function customHint(cm) {
+                    var cur = cm.getCursor(),
+                        tok = getTok(cm, cur),
+                        list = [];
+                    if (tok.dotBefore) {
+                        var d = MD[tok.base] || GM;
+                        list = d.filter(function (w) {
+                            return (
+                                w
+                                    .toLowerCase()
+                                    .indexOf(tok.word.toLowerCase()) === 0
+                            );
+                        });
+                    } else {
+                        var sc = scanIds(cm),
+                            all = KW.concat(GN, sc),
+                            seen = {};
+                        list = all.filter(function (w) {
+                            if (seen[w]) return false;
+                            seen[w] = 1;
+                            return (
+                                w
+                                    .toLowerCase()
+                                    .indexOf(tok.word.toLowerCase()) === 0 &&
+                                w.toLowerCase() !== tok.word.toLowerCase()
+                            );
+                        });
+                    }
+                    if (!list.length) return null;
+                    list.sort();
+                    return {
+                        list: list.map(function (w) {
+                            return { text: w, displayText: w };
+                        }),
+                        from: CodeMirror.Pos(tok.line, tok.start),
+                        to: CodeMirror.Pos(tok.line, tok.end),
+                    };
+                }
+
+                /* ── CodeMirror init ── */
+                var cm = CodeMirror(document.getElementById("ed"), {
+                    value: STARTER,
+                    mode: "javascript",
+                    theme: "gruvbox-dark",
+                    lineNumbers: true,
+                    matchBrackets: true,
+                    autoCloseBrackets: true,
+                    foldGutter: true,
+                    styleActiveLine: true,
+                    gutters: [
+                        "CodeMirror-linenumbers",
+                        "CodeMirror-foldgutter",
+                    ],
+                    indentUnit: 2,
+                    tabSize: 2,
+                    extraKeys: {
+                        "Ctrl-Enter": function () {
+                            runCode();
+                        },
+                        "Cmd-Enter": function () {
+                            runCode();
+                        },
+                        "Ctrl-Space": "autocomplete",
+                        "Alt-Space": "autocomplete",
+                        Tab: function (c) {
+                            if (c.somethingSelected()) c.indentSelection("add");
+                            else c.replaceSelection("  ");
+                        },
+                    },
+                    hintOptions: { hint: customHint, completeSingle: false },
+                });
+                cm.on("inputRead", function (c, ch) {
+                    if (
+                        ch.origin === "+input" &&
+                        ch.text[0] &&
+                        /[\w.]/.test(ch.text[0])
+                    )
+                        CodeMirror.commands.autocomplete(c, null, {
+                            completeSingle: false,
+                        });
+                });
+                var lastCode = cm.getValue().replace(/\s+/g, "");
+                cm.on("change", function () {
+                    if (state.autoRun) {
+                        var stripped = cm.getValue().replace(/\s+/g, "");
+                        if (stripped === lastCode) return;
+                        lastCode = stripped;
+                        clearTimeout(arTimer);
+                        arTimer = setTimeout(runCode, 700);
+                    }
+                });
+
+                /* ── Sandbox ── */
+                function buildHTML(code) {
+                    var cj = JSON.stringify(code);
+                    return (
+                        "<!DOCTYPE html><html><head></head><body><script>\n" +
+                        "(function(){\n" +
+                        "function serialize(v,d,s){\n" +
+                        "  s=s||new Set();d=d||0;\n" +
+                        '  if(v===null)return{t:"null"};\n' +
+                        '  if(v===undefined)return{t:"undefined"};\n' +
+                        "  var tp=typeof v;\n" +
+                        '  if(tp==="number"){if(Number.isNaN(v))return{t:"number",v:"NaN"};if(Object.is(v,-0))return{t:"number",v:"-0"};return{t:"number",v:String(v)};}\n' +
+                        '  if(tp==="string")return{t:"string",v:v};\n' +
+                        '  if(tp==="boolean")return{t:"boolean",v:v};\n' +
+                        '  if(tp==="bigint")return{t:"bigint",v:v.toString()};\n' +
+                        '  if(tp==="symbol")return{t:"symbol",v:v.toString()};\n' +
+                        '  if(tp==="function"){var src="";try{src=Function.prototype.toString.call(v);}catch(e){}return{t:"function",name:v.name||"anonymous",src:src.slice(0,300)};}\n' +
+                        '  if(typeof v==="object"){\n' +
+                        '    if(s.has(v))return{t:"circular"};\n' +
+                        '    if(d>6)return{t:"more"};\n' +
+                        '    if(Array.isArray(v)){s.add(v);var it=[];var mx=Math.min(v.length,100);for(var i=0;i<mx;i++)it.push(serialize(v[i],d+1,s));return{t:"array",items:it,length:v.length,truncated:v.length>mx};}\n' +
+                        '    if(v instanceof Error)return{t:"error",name:v.name,message:v.message,stack:(v.stack||"").split("\\n").slice(0,8).join("\\n")};\n' +
+                        '    if(v instanceof Date)return{t:"date",v:v.toISOString()};\n' +
+                        '    if(v instanceof RegExp)return{t:"regexp",v:v.toString()};\n' +
+                        '    if(v instanceof Map){s.add(v);var en=[];var c=0;v.forEach(function(vv,k){if(c++<50)en.push([serialize(k,d+1,s),serialize(vv,d+1,s)]);});return{t:"map",entries:en,size:v.size};}\n' +
+                        '    if(v instanceof Set){s.add(v);var si=[];var c2=0;v.forEach(function(vv){if(c2++<50)si.push(serialize(vv,d+1,s));});return{t:"set",items:si,size:v.size};}\n' +
+                        '    s.add(v);var ct="";try{ct=(v.constructor&&v.constructor.name!=="Object")?v.constructor.name:"";}catch(e){}\n' +
+                        "    var ks=Object.keys(v),et=[],mk=Math.min(ks.length,100);\n" +
+                        '    for(var j=0;j<mk;j++){var k=ks[j];try{et.push([k,serialize(v[k],d+1,s)]);}catch(e){et.push([k,{t:"string",v:"[unreadable]"}]);}}\n' +
+                        '    return{t:"object",entries:et,ctor:ct,truncated:ks.length>mk};\n' +
+                        "  }\n" +
+                        '  return{t:"string",v:String(v)};\n' +
+                        "}\n" +
+                        'function send(tp,pl){parent.postMessage({type:tp,payload:pl},"*");}\n' +
+                        '["log","info","warn","error","debug"].forEach(function(lv){\n' +
+                        '  console[lv]=function(){var a=Array.prototype.slice.call(arguments).map(function(x){return serialize(x);});send("console",{level:lv==="debug"?"log":lv,args:a,time:Date.now()});};\n' +
+                        "});\n" +
+                        'window.addEventListener("error",function(e){send("console",{level:"error",args:[serialize(e.error||e.message)],time:Date.now()});e.preventDefault();});\n' +
+                        'window.addEventListener("unhandledrejection",function(e){send("console",{level:"error",args:[serialize(e.reason)],time:Date.now()});e.preventDefault();});\n' +
+                        "var __t=performance.now(),__fn;\n" +
+                        'try{__fn=new Function("return (async function(){\\n"+' +
+                        cj +
+                        '+"\\n})();");}\n' +
+                        'catch(e){send("console",{level:"error",args:[serialize(e)],time:Date.now()});send("done",{duration:performance.now()-__t,time:Date.now()});__fn=null;}\n' +
+                        'if(__fn){__fn().then(function(){send("done",{duration:performance.now()-__t,time:Date.now()});}).catch(function(e){send("console",{level:"error",args:[serialize(e)],time:Date.now()});send("done",{duration:performance.now()-__t,time:Date.now()});});}\n' +
+                        "})();\n" +
+                        "<\/script></body></html>"
+                    );
+                }
+
+                function runCode() {
+                    clearConsole();
+                    var code = cm.getValue(),
+                        html = buildHTML(code);
+                    var old = document.getElementById("sb"),
+                        fresh = document.createElement("iframe");
+                    fresh.id = "sb";
+                    fresh.style.display = "none";
+                    fresh.setAttribute("sandbox", "allow-scripts");
+                    old.replaceWith(fresh);
+                    lastRun = Date.now();
+                    fresh.srcdoc = html;
+                    clearTimeout(wdTimer);
+                    wdTimer = setTimeout(function () {
+                        addLog({
+                            level: "error",
+                            args: [
+                                {
+                                    t: "string",
+                                    v: "⏱ Eksekusi dihentikan — kemungkinan infinite loop.",
+                                },
+                            ],
+                            time: Date.now(),
+                        });
+                        var k = document.createElement("iframe");
+                        k.id = "sb";
+                        k.style.display = "none";
+                        k.setAttribute("sandbox", "allow-scripts");
+                        document.getElementById("sb").replaceWith(k);
+                        updateFoot(lastRun, 5000);
+                    }, 5000);
+                }
+
+                window.addEventListener("message", function (e) {
+                    if (!e.data || typeof e.data !== "object") return;
+                    if (e.data.type === "console") {
+                        addLog(e.data.payload);
+                        if (!state.rigid)
+                            document.getElementById("cl").scrollTop =
+                                document.getElementById("cl").scrollHeight;
+                    } else if (e.data.type === "done") {
+                        clearTimeout(wdTimer);
+                        updateFoot(lastRun, e.data.payload.duration);
+                    }
+                });
+
+                /* ── Footer ── */
+                function updateFoot(ts, dur) {
+                    var d = new Date(ts),
+                        h = String(d.getHours()).padStart(2, "0"),
+                        m = String(d.getMinutes()).padStart(2, "0"),
+                        s = String(d.getSeconds()).padStart(2, "0"),
+                        ms = String(d.getMilliseconds()).padStart(3, "0");
+                    document.getElementById("ft").textContent =
+                        h + ":" + m + ":" + s + "." + ms;
+                    document.getElementById("fd").textContent =
+                        dur.toFixed(3) + " ms";
+                }
+
+                /* ── Console rendering ── */
+                function previewOf(n) {
+                    switch (n.t) {
+                        case "string": {
+                            var s = JSON.stringify(n.v);
+                            return s.length > 70 ? s.slice(0, 67) + '..."' : s;
+                        }
+                        case "number":
+                        case "boolean":
+                        case "bigint":
+                            return String(n.v);
+                        case "null":
+                            return "null";
+                        case "undefined":
+                            return "undefined";
+                        case "symbol":
+                            return n.v;
+                        case "function":
+                            return "ƒ " + (n.name || "anonymous") + "()";
+                        case "array": {
+                            var pi = n.items
+                                .slice(0, 5)
+                                .map(previewOf)
+                                .join(", ");
+                            return (
+                                "Array(" +
+                                n.length +
+                                ") [" +
+                                pi +
+                                (n.truncated || n.items.length < n.length
+                                    ? ", …"
+                                    : "") +
+                                "]"
+                            );
+                        }
+                        case "object": {
+                            var po = n.entries
+                                .slice(0, 4)
+                                .map(function (e) {
+                                    return e[0] + ": " + previewOf(e[1]);
+                                })
+                                .join(", ");
+                            return (
+                                (n.ctor ? n.ctor + " " : "") +
+                                "{" +
+                                po +
+                                (n.entries.length > 4 || n.truncated
+                                    ? ", …"
+                                    : "") +
+                                "}"
+                            );
+                        }
+                        case "map": {
+                            var pm = n.entries
+                                .slice(0, 3)
+                                .map(function (e) {
+                                    return (
+                                        previewOf(e[0]) +
+                                        " => " +
+                                        previewOf(e[1])
+                                    );
+                                })
+                                .join(", ");
+                            return (
+                                "Map(" +
+                                n.size +
+                                ") {" +
+                                pm +
+                                (n.size > 3 ? ", …" : "") +
+                                "}"
+                            );
+                        }
+                        case "set": {
+                            var ps = n.items
+                                .slice(0, 3)
+                                .map(previewOf)
+                                .join(", ");
+                            return (
+                                "Set(" +
+                                n.size +
+                                ") {" +
+                                ps +
+                                (n.size > 3 ? ", …" : "") +
+                                "}"
+                            );
+                        }
+                        case "error":
+                            return n.name + ": " + n.message;
+                        case "date":
+                            return n.v;
+                        case "regexp":
+                            return n.v;
+                        case "circular":
+                            return "[Circular]";
+                        case "more":
+                            return "…";
+                        default:
+                            return String(n.v);
+                    }
+                }
+
+                function titleOf(args) {
+                    var raw = args.map(previewOf).join("  ").trim();
+                    var cleaned = raw.replace(/^"(.*)"$/, "$1");
+                    var words = cleaned.split(/\s+/).slice(0, 3).join(" ");
+                    if (words.length > 38) words = words.slice(0, 38) + "…";
+                    return words || "(log)";
+                }
+
+                function labelOf(n) {
+                    if (n.t === "array") return "Array(" + n.length + ")";
+                    if (n.t === "map") return "Map(" + n.size + ")";
+                    if (n.t === "set") return "Set(" + n.size + ")";
+                    return (n.ctor ? n.ctor + " " : "") + "{…}";
+                }
+
+                function esc(s) {
+                    return String(s).replace(/[&<>"]/g, function (c) {
+                        return {
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            '"': "&quot;",
+                        }[c];
+                    });
+                }
+
+                function renderTree(n, top) {
+                    var w = document.createElement("div");
+                    w.className = "tn";
+                    if (n.t === "error") {
+                        var ne = document.createElement("div");
+                        ne.innerHTML =
+                            '<span class="terr">' +
+                            esc(n.name) +
+                            "</span>: " +
+                            esc(n.message);
+                        w.appendChild(ne);
+                        if (n.stack) {
+                            var se = document.createElement("div");
+                            se.className = "tstack";
+                            se.textContent = n.stack;
+                            w.appendChild(se);
+                        }
+                        return w;
+                    }
+                    if (
+                        n.t === "object" ||
+                        n.t === "array" ||
+                        n.t === "map" ||
+                        n.t === "set"
+                    ) {
+                        var tg = document.createElement("span");
+                        tg.className = "tt";
+                        tg.textContent = top ? "▾" : "▸";
+                        var lb = document.createElement("span");
+                        lb.className = "tl";
+                        lb.textContent = labelOf(n);
+                        var ch = document.createElement("div");
+                        ch.className = "tc";
+                        if (!top) ch.hidden = true;
+                        var ents;
+                        if (n.t === "array")
+                            ents = n.items.map(function (v, i) {
+                                return [String(i), v];
+                            });
+                        else if (n.t === "object") ents = n.entries;
+                        else if (n.t === "map")
+                            ents = n.entries.map(function (e) {
+                                return ["[" + previewOf(e[0]) + "]", e[1]];
+                            });
+                        else
+                            ents = n.items.map(function (v, i) {
+                                return [String(i), v];
+                            });
+                        ents.forEach(function (p) {
+                            var cd = document.createElement("div");
+                            cd.className = "te";
+                            var ks = document.createElement("span");
+                            ks.className = "tk";
+                            ks.textContent = p[0] + ":";
+                            cd.appendChild(ks);
+                            cd.appendChild(renderTree(p[1], false));
+                            ch.appendChild(cd);
+                        });
+                        function doTreeToggle(ev) {
+                            ev.stopPropagation();
+                            ch.hidden = !ch.hidden;
+                            tg.textContent = ch.hidden ? "▸" : "▾";
+                            /* Saat Log View OFF dan baru dibuka, scroll hd ke batas atas console */
+                            if (!state.rigid && !ch.hidden) {
+                                var cl = document.getElementById("cl");
+                                var consoleTop = cl.getBoundingClientRect().top;
+                                var hdTop = hd.getBoundingClientRect().top;
+                                cl.scrollTo({
+                                    top: cl.scrollTop + (hdTop - consoleTop),
+                                    behavior: "smooth",
+                                });
+                            }
+                        }
+                        tg.addEventListener("click", doTreeToggle);
+                        var hd = document.createElement("div");
+                        hd.className = "th";
+                        hd.appendChild(tg);
+                        hd.appendChild(lb);
+                        hd.addEventListener("click", doTreeToggle);
+                        w.appendChild(hd);
+                        w.appendChild(ch);
+                    } else if (n.t === "function") {
+                        var fn = document.createElement("span");
+                        fn.className = "tfn";
+                        fn.textContent =
+                            "ƒ " +
+                            (n.name || "anonymous") +
+                            "  " +
+                            (n.src ? n.src.slice(0, 120) : "");
+                        w.appendChild(fn);
+                    } else {
+                        var vl = document.createElement("span");
+                        var cls =
+                            n.t === "string"
+                                ? "tstr"
+                                : n.t === "number"
+                                  ? "tnum"
+                                  : n.t === "boolean"
+                                    ? "tbool"
+                                    : n.t === "null"
+                                      ? "tnul"
+                                      : n.t === "undefined"
+                                        ? "tund"
+                                        : n.t === "bigint"
+                                          ? "tbig"
+                                          : n.t === "symbol"
+                                            ? "tsym"
+                                            : n.t === "date"
+                                              ? "tdate"
+                                              : n.t === "regexp"
+                                                ? "trx"
+                                                : "tl";
+                        vl.className = cls;
+                        vl.textContent =
+                            n.t === "string"
+                                ? JSON.stringify(n.v)
+                                : previewOf(n);
+                        w.appendChild(vl);
+                    }
+                    return w;
+                }
+
+                function addLog(entry) {
+                    var row = document.createElement("div");
+                    row.className = "lr l" + entry.level;
+                    var sum = document.createElement("div");
+                    sum.className = "ls";
+                    var dot = document.createElement("span");
+                    dot.className = "ld";
+                    dot.textContent =
+                        { log: "›", info: "i", warn: "!", error: "✕" }[
+                            entry.level
+                        ] || "›";
+                    var prev = document.createElement("span");
+                    prev.className = "lp";
+                    prev.textContent = titleOf(entry.args);
+                    var det = document.createElement("div");
+                    det.className = "ldt";
+                    entry.args.forEach(function (a) {
+                        det.appendChild(renderTree(a, true));
+                    });
+                    sum.addEventListener("click", function () {
+                        row.classList.toggle("exp");
+                        if (!state.rigid && row.classList.contains("exp")) {
+                            /* Auto-scroll: naikkan log ke atas console agar langsung terbaca */
+                            var cl = document.getElementById("cl");
+                            var consoleTop = cl.getBoundingClientRect().top;
+                            var rowTop = row.getBoundingClientRect().top;
+                            cl.scrollTo({
+                                top: cl.scrollTop + (rowTop - consoleTop),
+                                behavior: "smooth",
+                            });
+                        } else if (state.rigid && row.classList.contains("exp")) {
+                            row.scrollIntoView({
+                                behavior: "smooth",
+                                block: "nearest",
+                            });
+                        }
+                    });
+                    sum.appendChild(dot);
+                    sum.appendChild(prev);
+                    row.appendChild(sum);
+                    row.appendChild(det);
+                    document.getElementById("cl").appendChild(row);
+                }
+
+                function clearConsole() {
+                    document.getElementById("cl").innerHTML = "";
+                }
+
+                /* ── Toolbar handlers ── */
+                document
+                    .getElementById("brun")
+                    .addEventListener("click", runCode);
+
+                document
+                    .getElementById("baut")
+                    .addEventListener("click", function () {
+                        state.autoRun = !state.autoRun;
+                        this.classList.toggle("on", state.autoRun);
+                    });
+
+                document
+                    .getElementById("bfmt")
+                    .addEventListener("click", function () {
+                        if (
+                            typeof prettier === "undefined" ||
+                            typeof prettierPlugins === "undefined"
+                        ) {
+                            addLog({
+                                level: "error",
+                                args: [
+                                    {
+                                        t: "string",
+                                        v: "Prettier belum siap (cek koneksi).",
+                                    },
+                                ],
+                                time: Date.now(),
+                            });
+                            return;
+                        }
+                        try {
+                            var scroll = cm.getScrollInfo();
+                            var cursor = cm.getCursor();
+                            var fmt = prettier.format(cm.getValue(), {
+                                parser: "babel",
+                                plugins: [prettierPlugins.babel],
+                                semi: true,
+                                singleQuote: false,
+                                tabWidth: 2,
+                            });
+                            cm.setValue(fmt);
+                            cm.setCursor(cursor);
+                            cm.scrollTo(scroll.left, scroll.top);
+                        } catch (err) {
+                            addLog({
+                                level: "error",
+                                args: [
+                                    {
+                                        t: "string",
+                                        v: "Format gagal: " + err.message,
+                                    },
+                                ],
+                                time: Date.now(),
+                            });
+                        }
+                    });
+
+                document
+                    .getElementById("bln")
+                    .addEventListener("click", function () {
+                        var show = !cm.getOption("lineNumbers");
+                        cm.setOption("lineNumbers", show);
+                        cm.setOption(
+                            "gutters",
+                            show
+                                ? [
+                                      "CodeMirror-linenumbers",
+                                      "CodeMirror-foldgutter",
+                                  ]
+                                : ["CodeMirror-foldgutter"],
+                        );
+                        this.classList.toggle("on", show);
+                        cm.refresh();
+                    });
+
+                document
+                    .getElementById("bww")
+                    .addEventListener("click", function () {
+                        state.wordWrap = !state.wordWrap;
+                        this.classList.toggle("on", state.wordWrap);
+                        cm.setOption("lineWrapping", state.wordWrap);
+                        cm.refresh();
+                    });
+
+                document
+                    .getElementById("bclr")
+                    .addEventListener("click", clearConsole);
+
+                document
+                    .getElementById("bthm")
+                    .addEventListener("click", function () {
+                        state.ember = !state.ember;
+                        this.classList.toggle("on", state.ember);
+                        document.body.classList.toggle("theme-ember", state.ember);
+                        cm.refresh();
+                    });
+
+                document
+                    .getElementById("brig")
+                    .addEventListener("click", function () {
+                        state.rigid = !state.rigid;
+                        this.classList.toggle("on", state.rigid);
+                    });
+
+
+                /* ── Resizable divider ── */
+                (function () {
+                    var pn = document.getElementById("panels"),
+                        ep = document.getElementById("ep"),
+                        cp = document.getElementById("cp"),
+                        dv = document.getElementById("dv"),
+                        drag = false,
+                        MIN = 8,
+                        MAX = 92;
+                    dv.addEventListener("pointerdown", function (e) {
+                        drag = true;
+                        dv.classList.add("drag");
+                        dv.setPointerCapture(e.pointerId);
+                    });
+                    dv.addEventListener("pointermove", function (e) {
+                        if (!drag) return;
+                        var r = pn.getBoundingClientRect(),
+                            pct = ((e.clientY - r.top) / r.height) * 100;
+                        pct = Math.max(MIN, Math.min(MAX, pct));
+                        ep.style.flexBasis = pct + "%";
+                        cp.style.flexBasis = 100 - pct + "%";
+                        cm.refresh();
+                    });
+                    function end() {
+                        if (!drag) return;
+                        drag = false;
+                        dv.classList.remove("drag");
+                        cm.refresh();
+                    }
+                    dv.addEventListener("pointerup", end);
+                    dv.addEventListener("pointercancel", end);
+                })();
+
+                runCode();
+            })();
+        </script>
+    </body>
+</html>
