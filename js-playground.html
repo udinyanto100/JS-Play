@@ -1063,8 +1063,9 @@
                 }
 
                 /* ── CodeMirror init ── */
+                var savedCode = localStorage.getItem("jspg_code");
                 var cm = CodeMirror(document.getElementById("ed"), {
-                    value: STARTER,
+                    value: savedCode !== null ? savedCode : STARTER,
                     mode: "javascript",
                     theme: "gruvbox-dark",
                     lineNumbers: true,
@@ -1106,6 +1107,10 @@
                 });
                 var lastCode = cm.getValue().replace(/\s+/g, "");
                 cm.on("change", function () {
+                    clearTimeout(wdTimer);
+                    wdTimer = setTimeout(function () {
+                        localStorage.setItem("jspg_code", cm.getValue());
+                    }, 500);
                     if (state.autoRun) {
                         var stripped = cm.getValue().replace(/\s+/g, "");
                         if (stripped === lastCode) return;
