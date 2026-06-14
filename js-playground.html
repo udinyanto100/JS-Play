@@ -791,7 +791,7 @@
                     </button>
                     <div id="fdrop"><!-- diisi JS --></div>
                 </div>
-                <button class="btn on" id="bln" title="Nomor baris">
+                <button class="btn on" id="bln" title="Sembunyi">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="9" x2="19" y2="9" />
                         <line x1="5" y1="15" x2="19" y2="15" />
@@ -807,14 +807,14 @@
                         <path d="M3 18h7" />
                     </svg>
                 </button>
-                <button class="btn" id="bfmt" title="Rapikan kode">
+                <button class="btn" id="bfmt" title="Rapikan">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 3v4M3 5h4M13 3l1.6 4.7L19 9l-4.4 1.6L13 15l-1.6-4.4L7 9l4.4-1.6z" />
                         <path d="M6 17v4M4 19h4" />
                     </svg>
                 </button>
                 <div class="sep"></div>
-                <button class="btn" id="bclr" title="Bersihkan console">
+                <button class="btn" id="bclr" title="Console">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="3 6 5 6 21 6" />
                         <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" />
@@ -838,7 +838,7 @@
                         <path d="M21 3v5h-5" />
                     </svg>
                 </button>
-                <button class="btn on" id="brig" title="Kunci Scroll Log">
+                <button class="btn on" id="brig" title="View Log">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="17" x2="12" y2="22"/>
                         <path d="M5 17h14v-2a7 7 0 0 0-7-7 7 7 0 0 0-7 7v2z"/>
@@ -846,7 +846,7 @@
                         <circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/>
                     </svg>
                 </button>
-                <button class="btn on" id="bthm" title="Ganti tema warna kode">
+                <button class="btn on" id="bthm" title="warna kode">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="13.5" cy="6.5" r="2.5"/>
                         <circle cx="17.5" cy="10.5" r="2.5"/>
@@ -1898,7 +1898,7 @@
                                 /* tombol hapus (✕) */
                                 var del = document.createElement("span");
                                 del.className = "fdrop-action fdrop-del";
-                                del.title = files.length === 1 ? "Tidak bisa hapus file terakhir" : "Hapus file";
+                                del.title = files.length === 1 ? "Tidak bisa hapus file terakhir" : "Klik 2 kali ya !";
                                 del.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
                                 del.addEventListener("click", function (e) {
                                     e.stopPropagation();
