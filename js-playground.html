@@ -62,51 +62,6 @@
                 --gry:   #707080;
                 --acc: var(--pur);
             }
-            /* Override warna variable & property untuk Ember */
-            body.theme-ember .cm-s-gruvbox-dark .cm-variable {
-                color: #c0a0b8;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-variable-2 {
-                color: #b090c8;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-property {
-                color: #b898c0;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-keyword {
-                color: #c880b8;
-                font-weight: 600;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-def {
-                color: #c088b8;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-string,
-            body.theme-ember .cm-s-gruvbox-dark .cm-string-2 {
-                color: #90b098;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-number,
-            body.theme-ember .cm-s-gruvbox-dark .cm-atom {
-                color: #d890a0;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-builtin,
-            body.theme-ember .cm-s-gruvbox-dark .cm-meta,
-            body.theme-ember .cm-s-gruvbox-dark .cm-variable-3 {
-                color: #80a0b0;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-comment {
-                color: #606070;
-                font-style: italic;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-operator,
-            body.theme-ember .cm-s-gruvbox-dark .cm-qualifier,
-            body.theme-ember .cm-s-gruvbox-dark .cm-attribute {
-                color: #c890a8;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-bracket {
-                color: #9090a0;
-            }
-            body.theme-ember .cm-s-gruvbox-dark .cm-tag {
-                color: #d89098;
-            }
             * {
                 box-sizing: border-box;
                 margin: 0;
@@ -265,6 +220,30 @@
             .fdrop-del {
                 color: var(--red);
             }
+            .fdrop-del.armed {
+                color: var(--green) !important;
+                opacity: 1 !important;
+                background: rgba(114, 184, 158, 0.16);
+            }
+            @keyframes fdropPop {
+                0% {
+                    transform: scale(0.4) rotate(-120deg);
+                    opacity: 0;
+                }
+                55% {
+                    transform: scale(1.35) rotate(10deg);
+                    opacity: 1;
+                }
+                80% {
+                    transform: scale(0.92) rotate(-4deg);
+                }
+                100% {
+                    transform: scale(1) rotate(0deg);
+                }
+            }
+            .fdrop-action.pop svg {
+                animation: fdropPop 0.32s cubic-bezier(.34,1.56,.64,1);
+            }
             .fdrop-sep {
                 height: 1px;
                 background: var(--b2);
@@ -287,6 +266,464 @@
             .fdrop-new svg {
                 width: 12px;
                 height: 12px;
+            }
+
+            /* ── Archive panel (file & tema) ── */
+            #arc-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(5,8,14,0.55);
+                z-index: 150;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.15s ease;
+                padding: 14px;
+            }
+            #arc-overlay.show { opacity: 1; pointer-events: auto; }
+            #arc-panel {
+                width: 100%;
+                max-width: 360px;
+                max-height: 70vh;
+                background: var(--b0s);
+                border: 1px solid var(--b2);
+                border-radius: 10px;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+                transform: translateY(12px) scale(0.98);
+                transition: transform 0.15s ease;
+            }
+            #arc-overlay.show #arc-panel { transform: translateY(0) scale(1); }
+            #arc-head {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-bottom: 1px solid var(--b1);
+                flex-shrink: 0;
+            }
+            #arc-head svg { width: 14px; height: 14px; color: var(--f4); }
+            #arc-head-title { flex: 1; font-size: 13px; font-weight: 600; color: var(--f2); }
+            #arc-close {
+                width: 24px; height: 24px;
+                display: flex; align-items: center; justify-content: center;
+                border-radius: 4px; border: none; background: transparent;
+                color: var(--f3); cursor: pointer; font-family: inherit;
+                transition: background 0.1s, color 0.1s;
+            }
+            #arc-close:hover { background: var(--b1); color: var(--f1); }
+            #arc-list {
+                flex: 1; overflow-y: auto; padding: 6px;
+                display: flex; flex-direction: column; gap: 2px;
+            }
+            .arc-empty { text-align: center; color: var(--f4); font-size: 12px; padding: 20px 0; }
+            .arc-item {
+                display: flex; align-items: center; gap: 8px;
+                padding: 6px 8px; border-radius: 5px; background: var(--b1);
+            }
+            .arc-item-name {
+                flex: 1; font-size: 12px; color: var(--f2);
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            }
+            .arc-restore {
+                display: flex; align-items: center; gap: 4px;
+                padding: 3px 8px; border-radius: 4px; border: 1px solid var(--b3);
+                background: transparent; color: var(--green);
+                font-family: inherit; font-size: 11px; cursor: pointer;
+                transition: background 0.1s; white-space: nowrap;
+            }
+            .arc-restore:hover { background: var(--b2); }
+            .arc-restore svg { width: 10px; height: 10px; }
+            .arc-perm {
+                display: flex; align-items: center; justify-content: center;
+                width: 22px; height: 22px; border-radius: 4px; border: none;
+                background: transparent; color: var(--red); cursor: pointer;
+                transition: background 0.1s; flex-shrink: 0;
+            }
+            .arc-perm:hover { background: rgba(208,144,152,0.15); }
+            .arc-perm svg { width: 11px; height: 11px; }
+
+            /* ── Theme switcher dropdown (reuses .fdrop-* styles) ── */
+            #bthm-wrap {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+            #bthm-wrap::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                right: 0;
+                width: 100%;
+                height: 8px;
+                background: transparent;
+            }
+            #thdrop {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                min-width: 215px;
+                background: var(--b0s);
+                border: 1px solid var(--b2);
+                border-radius: var(--rad);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                z-index: 100;
+                padding: 4px;
+                flex-direction: column;
+                gap: 2px;
+            }
+            #bthm-wrap:hover #thdrop,
+            #thdrop:hover {
+                display: flex;
+            }
+            .thswatches {
+                display: flex;
+                gap: 2px;
+                flex-shrink: 0;
+            }
+            .thdot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                flex-shrink: 0;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            /* ── Theme editor overlay ── */
+            #thed-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(5, 8, 14, 0.6);
+                z-index: 200;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.18s ease;
+                padding: 14px;
+            }
+            #thed-overlay.show {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            #thed {
+                width: 100%;
+                max-width: 420px;
+                max-height: 86vh;
+                background: var(--b0s);
+                border: 1px solid var(--b2);
+                border-radius: 10px;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                transform: translateY(14px) scale(0.98);
+                transition: transform 0.18s ease;
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+            }
+            #thed-overlay.show #thed {
+                transform: translateY(0) scale(1);
+            }
+            #thed-copy {
+                width: 26px;
+                height: 26px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 5px;
+                border: 1px solid var(--b2);
+                background: transparent;
+                color: var(--f3);
+                cursor: pointer;
+                transition: background 0.1s, color 0.1s, border-color 0.1s;
+            }
+            #thed-copy:hover { background: var(--b1); color: var(--f1); border-color: var(--b3); }
+            #thed-copy.copied { color: var(--green); border-color: var(--green); background: rgba(114,184,158,0.12); }
+            #thed-copy svg { pointer-events: none; }
+
+            /* Toast notifikasi copy */
+            #copy-toast {
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(12px);
+                background: var(--b2);
+                border: 1px solid var(--b3);
+                color: var(--f1);
+                font-size: 12px;
+                padding: 7px 14px;
+                border-radius: 20px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.15s ease, transform 0.15s ease;
+                z-index: 300;
+                white-space: nowrap;
+            }
+            #copy-toast.show {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            #thed-head {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-bottom: 1px solid var(--b1);
+                flex-shrink: 0;
+            }
+            #thed-head svg {
+                width: 14px;
+                height: 14px;
+                color: var(--f4);
+                flex-shrink: 0;
+            }
+            #thed-name {
+                font-size: 13px;
+                color: var(--f2);
+                font-weight: 600;
+                outline: none;
+                border-radius: 4px;
+                padding: 2px 5px;
+                min-width: 40px;
+                flex: 1;
+            }
+            #thed-name[contenteditable="true"]:focus {
+                background: var(--b1);
+            }
+            #thed-body {
+                flex: 1;
+                overflow-y: auto;
+                padding: 4px 6px 10px;
+            }
+            .thgroup-h {
+                font-size: 10.5px;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: var(--f4);
+                padding: 10px 8px 4px;
+            }
+            .throw {
+                border-radius: 6px;
+                overflow: hidden;
+            }
+            .throw-h {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 7px 8px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background 0.1s;
+                user-select: none;
+            }
+            .throw-h:hover {
+                background: var(--b1);
+            }
+            .throw.expanded > .throw-h {
+                background: var(--b1);
+            }
+            .thsw {
+                width: 18px;
+                height: 18px;
+                border-radius: 5px;
+                flex-shrink: 0;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.15);
+                transition: background 0.05s linear;
+            }
+            .thlabel {
+                flex: 1;
+                font-size: 12.5px;
+                color: var(--f2);
+            }
+            .thhex {
+                font-size: 11px;
+                color: var(--f4);
+                font-variant-numeric: tabular-nums;
+            }
+            .thok {
+                color: var(--green);
+                flex-shrink: 0;
+                display: flex;
+            }
+            .thok svg {
+                width: 12px;
+                height: 12px;
+            }
+            .thpicker {
+                display: none;
+                flex-direction: column;
+                gap: 0;
+                padding: 0 10px 12px 10px;
+            }
+            .throw.expanded .thpicker {
+                display: flex;
+            }
+
+            /* ── Color Picker (HSV canvas + hue slider + hex input) ── */
+            .cpk-wrap {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px 0 4px;
+            }
+            .cpk-canvas-wrap {
+                position: relative;
+                width: 100%;
+                height: 140px;
+                border-radius: 5px;
+                overflow: hidden;
+                cursor: crosshair;
+                flex-shrink: 0;
+            }
+            .cpk-canvas {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+            .cpk-thumb {
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                border: 2px solid #fff;
+                box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.5);
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+            }
+            .cpk-hue-wrap {
+                position: relative;
+                height: 14px;
+                border-radius: 7px;
+                background: linear-gradient(to right,
+                    #f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);
+                cursor: pointer;
+                overflow: visible;
+            }
+            .cpk-hue-thumb {
+                position: absolute;
+                top: 50%;
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: #fff;
+                border: 2px solid #fff;
+                box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.5);
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+            }
+            .cpk-hex-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .cpk-swatch {
+                width: 22px;
+                height: 22px;
+                border-radius: 5px;
+                flex-shrink: 0;
+                border: 1px solid rgba(255,255,255,0.12);
+            }
+            .cpk-hex-input {
+                flex: 1;
+                background: var(--b1);
+                border: 1px solid var(--b3);
+                border-radius: 5px;
+                color: var(--f2);
+                font-family: inherit;
+                font-size: 12px;
+                padding: 4px 8px;
+                outline: none;
+                letter-spacing: 0.05em;
+            }
+            .cpk-hex-input:focus {
+                border-color: var(--acc);
+            }
+            .thconfirm {
+                align-self: flex-start;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                margin-top: 2px;
+                padding: 5px 10px;
+                border-radius: var(--rad);
+                border: 1px solid var(--b3);
+                background: var(--b1);
+                color: var(--green);
+                font-family: inherit;
+                font-size: 11.5px;
+                cursor: pointer;
+                transition: background 0.12s;
+            }
+            .thconfirm:hover {
+                background: var(--b2);
+            }
+            .thconfirm svg {
+                width: 11px;
+                height: 11px;
+            }
+            #thed-foot {
+                display: flex;
+                gap: 8px;
+                padding: 10px 12px;
+                border-top: 1px solid var(--b1);
+                flex-shrink: 0;
+            }
+            #thed-save {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                height: 32px;
+                border-radius: var(--rad);
+                border: 1px solid var(--b3);
+                background: var(--b1);
+                color: var(--green);
+                font-family: inherit;
+                font-size: 12.5px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.12s;
+            }
+            #thed-save:hover {
+                background: var(--b2);
+            }
+            #thed-save svg {
+                width: 14px;
+                height: 14px;
+            }
+            #thed-cancel {
+                width: 32px;
+                height: 32px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: var(--rad);
+                border: 1px solid var(--b2);
+                background: transparent;
+                color: var(--f3);
+                cursor: pointer;
+                transition: background 0.12s, color 0.12s;
+            }
+            #thed-cancel:hover {
+                background: var(--b1);
+                color: var(--f1);
+            }
+            #thed-cancel svg {
+                width: 14px;
+                height: 14px;
             }
 
             /* ── Toolbar ── */
@@ -456,82 +893,86 @@
             .cm-s-gruvbox-light .CodeMirror-linenumber {
                 color: var(--b4);
             }
-            .cm-s-gruvbox-dark .cm-keyword,
-            .cm-s-gruvbox-light .cm-keyword {
+            /* Selektor diberi bobot ekstra (.cm-s-gruvbox-dark.CodeMirror ...) agar
+               menang dari tema gruvbox eksternal yang memakai selector "span.cm-xxx"
+               — tanpa ini, warna keyword/property/string "terkunci" ke warna
+               bawaan gruvbox dan tidak ikut perubahan variabel tema. */
+            .cm-s-gruvbox-dark.CodeMirror .cm-keyword,
+            .cm-s-gruvbox-light.CodeMirror .cm-keyword {
                 color: var(--pur);
                 font-weight: 600;
             }
-            .cm-s-gruvbox-dark .cm-atom,
-            .cm-s-gruvbox-light .cm-atom {
+            .cm-s-gruvbox-dark.CodeMirror .cm-atom,
+            .cm-s-gruvbox-light.CodeMirror .cm-atom {
                 color: var(--ora);
             }
-            .cm-s-gruvbox-dark .cm-number,
-            .cm-s-gruvbox-light .cm-number {
+            .cm-s-gruvbox-dark.CodeMirror .cm-number,
+            .cm-s-gruvbox-light.CodeMirror .cm-number {
                 color: var(--ora);
             }
-            .cm-s-gruvbox-dark .cm-def,
-            .cm-s-gruvbox-light .cm-def {
+            .cm-s-gruvbox-dark.CodeMirror .cm-def,
+            .cm-s-gruvbox-light.CodeMirror .cm-def {
                 color: var(--yel);
             }
-            .cm-s-gruvbox-dark .cm-variable,
-            .cm-s-gruvbox-light .cm-variable {
-                color: #90b8cc;
-            }
-            .cm-s-gruvbox-dark .cm-variable-2,
-            .cm-s-gruvbox-light .cm-variable-2 {
+            .cm-s-gruvbox-dark.CodeMirror .cm-variable,
+            .cm-s-gruvbox-light.CodeMirror .cm-variable {
                 color: var(--blu);
             }
-            .cm-s-gruvbox-dark .cm-variable-3,
-            .cm-s-gruvbox-light .cm-variable-3 {
+            .cm-s-gruvbox-dark.CodeMirror .cm-variable-2,
+            .cm-s-gruvbox-light.CodeMirror .cm-variable-2 {
+                color: var(--blu);
+            }
+            .cm-s-gruvbox-dark.CodeMirror .cm-variable-3,
+            .cm-s-gruvbox-light.CodeMirror .cm-variable-3 {
                 color: var(--aqu);
             }
-            .cm-s-gruvbox-dark .cm-property,
-            .cm-s-gruvbox-light .cm-property {
-                color: #80a8c0;
+            .cm-s-gruvbox-dark.CodeMirror .cm-property,
+            .cm-s-gruvbox-light.CodeMirror .cm-property {
+                color: var(--blu);
             }
-            .cm-s-gruvbox-dark .cm-operator,
-            .cm-s-gruvbox-light .cm-operator {
+            .cm-s-gruvbox-dark.CodeMirror .cm-operator,
+            .cm-s-gruvbox-light.CodeMirror .cm-operator {
                 color: var(--yel);
             }
-            .cm-s-gruvbox-dark .cm-comment,
-            .cm-s-gruvbox-light .cm-comment {
+            .cm-s-gruvbox-dark.CodeMirror .cm-comment,
+            .cm-s-gruvbox-light.CodeMirror .cm-comment {
                 color: var(--gry);
                 font-style: italic;
             }
-            .cm-s-gruvbox-dark .cm-string,
-            .cm-s-gruvbox-light .cm-string {
+            .cm-s-gruvbox-dark.CodeMirror .cm-string,
+            .cm-s-gruvbox-light.CodeMirror .cm-string {
                 color: var(--green);
             }
-            .cm-s-gruvbox-dark .cm-string-2,
-            .cm-s-gruvbox-light .cm-string-2 {
+            .cm-s-gruvbox-dark.CodeMirror .cm-string-2,
+            .cm-s-gruvbox-light.CodeMirror .cm-string-2 {
                 color: var(--green);
             }
-            .cm-s-gruvbox-dark .cm-meta,
-            .cm-s-gruvbox-light .cm-meta {
+            .cm-s-gruvbox-dark.CodeMirror .cm-meta,
+            .cm-s-gruvbox-light.CodeMirror .cm-meta {
                 color: var(--aqu);
             }
-            .cm-s-gruvbox-dark .cm-qualifier,
-            .cm-s-gruvbox-light .cm-qualifier {
+            .cm-s-gruvbox-dark.CodeMirror .cm-qualifier,
+            .cm-s-gruvbox-light.CodeMirror .cm-qualifier {
                 color: var(--yel);
             }
-            .cm-s-gruvbox-dark .cm-builtin,
-            .cm-s-gruvbox-light .cm-builtin {
+            .cm-s-gruvbox-dark.CodeMirror .cm-builtin,
+            .cm-s-gruvbox-light.CodeMirror .cm-builtin {
                 color: var(--aqu);
             }
-            .cm-s-gruvbox-dark .cm-bracket,
-            .cm-s-gruvbox-light .cm-bracket {
+            .cm-s-gruvbox-dark.CodeMirror .cm-bracket,
+            .cm-s-gruvbox-light.CodeMirror .cm-bracket {
                 color: var(--f3);
             }
-            .cm-s-gruvbox-dark .cm-tag,
-            .cm-s-gruvbox-light .cm-tag {
+            .cm-s-gruvbox-dark.CodeMirror .cm-tag,
+            .cm-s-gruvbox-light.CodeMirror .cm-tag {
                 color: var(--red);
             }
-            .cm-s-gruvbox-dark .cm-attribute,
-            .cm-s-gruvbox-light .cm-attribute {
+            .cm-s-gruvbox-dark.CodeMirror .cm-attribute,
+            .cm-s-gruvbox-light.CodeMirror .cm-attribute {
                 color: var(--yel);
             }
-            .cm-s-gruvbox-dark .cm-error,
-            .cm-s-gruvbox-light .cm-error {
+            .cm-s-gruvbox-dark.CodeMirror .cm-error,
+            .cm-s-gruvbox-light.CodeMirror .cm-error {
                 color: var(--red);
                 text-decoration: underline wavy;
             }
@@ -791,7 +1232,7 @@
                     </button>
                     <div id="fdrop"><!-- diisi JS --></div>
                 </div>
-                <button class="btn on" id="bln" title="Sembunyi">
+                <button class="btn on" id="bln" title="Nomor baris">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="9" x2="19" y2="9" />
                         <line x1="5" y1="15" x2="19" y2="15" />
@@ -807,14 +1248,21 @@
                         <path d="M3 18h7" />
                     </svg>
                 </button>
-                <button class="btn" id="bfmt" title="Rapikan">
+                <button class="btn" id="bfmt" title="Rapikan kode">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 3v4M3 5h4M13 3l1.6 4.7L19 9l-4.4 1.6L13 15l-1.6-4.4L7 9l4.4-1.6z" />
                         <path d="M6 17v4M4 19h4" />
                     </svg>
                 </button>
                 <div class="sep"></div>
-                <button class="btn" id="bclr" title="Console">
+                <button class="btn" id="barc" title="Arsip file (file yang dihapus)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="21 8 21 21 3 21 3 8"/>
+                        <rect x="1" y="3" width="22" height="5"/>
+                        <line x1="10" y1="12" x2="14" y2="12"/>
+                    </svg>
+                </button>
+                <button class="btn" id="bclr" title="Bersihkan console">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="3 6 5 6 21 6" />
                         <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" />
@@ -838,7 +1286,7 @@
                         <path d="M21 3v5h-5" />
                     </svg>
                 </button>
-                <button class="btn on" id="brig" title="View Log">
+                <button class="btn" id="brig" title="Kunci Scroll Log">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="17" x2="12" y2="22"/>
                         <path d="M5 17h14v-2a7 7 0 0 0-7-7 7 7 0 0 0-7 7v2z"/>
@@ -846,15 +1294,18 @@
                         <circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/>
                     </svg>
                 </button>
-                <button class="btn on" id="bthm" title="warna kode">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="13.5" cy="6.5" r="2.5"/>
-                        <circle cx="17.5" cy="10.5" r="2.5"/>
-                        <circle cx="8.5" cy="7.5" r="2.5"/>
-                        <circle cx="6.5" cy="12.5" r="2.5"/>
-                        <path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
-                    </svg>
-                </button>
+                <div id="bthm-wrap">
+                    <button class="btn on" id="bthm" title="Tema warna kode">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="13.5" cy="6.5" r="2.5"/>
+                            <circle cx="17.5" cy="10.5" r="2.5"/>
+                            <circle cx="8.5" cy="7.5" r="2.5"/>
+                            <circle cx="6.5" cy="12.5" r="2.5"/>
+                            <path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                        </svg>
+                    </button>
+                    <div id="thdrop"><!-- diisi JS --></div>
+                </div>
             </div>
 
             <div id="panels">
@@ -886,10 +1337,7 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                             >
-                                <path
-                                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
-                                />
-                                <circle cx="12" cy="12" r="3" />
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                             </svg>
                             <span id="fd">0.000 ms</span>
                         </div>
@@ -897,6 +1345,61 @@
                 </div>
             </div>
         </div>
+
+        <div id="arc-overlay">
+            <div id="arc-panel">
+                <div id="arc-head">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="21 8 21 21 3 21 3 8"/>
+                        <rect x="1" y="3" width="22" height="5"/>
+                        <line x1="10" y1="12" x2="14" y2="12"/>
+                    </svg>
+                    <span id="arc-head-title">Arsip</span>
+                    <button id="arc-close">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div id="arc-list"><!-- diisi JS --></div>
+            </div>
+        </div>
+
+        <div id="thed-overlay">
+            <div id="thed">
+                <div id="thed-head">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="13.5" cy="6.5" r="2.5"/>
+                        <circle cx="17.5" cy="10.5" r="2.5"/>
+                        <circle cx="8.5" cy="7.5" r="2.5"/>
+                        <circle cx="6.5" cy="12.5" r="2.5"/>
+                        <path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                    </svg>
+                    <span id="thed-name" contenteditable="true" spellcheck="false">Tema Baru</span>
+                    <button id="thed-copy" title="Salin semua kode warna">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="thed-body"><!-- diisi JS --></div>
+                <div id="thed-foot">
+                    <button id="thed-cancel" title="Batal, kembali ke tema sebelumnya">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                    <button id="thed-save">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Simpan Konfigurasi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="copy-toast">✓ Kode warna disalin!</div>
 
         <iframe id="sb" style="display: none" sandbox="allow-scripts"></iframe>
 
@@ -919,9 +1422,8 @@
 
                 var state = {
                     autoRun: true,
-                    rigid: true,
+                    rigid: false,
                     wordWrap: false,
-                    ember: true,
                 };
                 var arTimer = null,
                     wdTimer = null,
@@ -1333,7 +1835,7 @@
                     document.getElementById("ft").textContent =
                         h + ":" + m + ":" + s + "." + ms;
                     document.getElementById("fd").textContent =
-                        dur.toFixed(1) + " ms";
+                        dur.toFixed(3) + " ms";
                 }
 
                 /* ── Console rendering ── */
@@ -1633,6 +2135,96 @@
                     document.getElementById("cl").innerHTML = "";
                 }
 
+                /* ── Ikon SVG bersama (dipakai file & tema) ── */
+                var ICON_X =
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+                var ICON_CHECK =
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg>';
+                var ICON_PENCIL =
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+                var ICON_PLUS =
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+
+                /**
+                 * Tombol hapus file: 1 klik langsung ke arsip.
+                 * Tombol hapus tema custom: 1 klik ke arsip tema.
+                 * opts: { onArchive, title }
+                 */
+                function wireArchiveBtn(el, opts) {
+                    el.innerHTML = ICON_X;
+                    el.title = opts.title || "Hapus (ke arsip)";
+                    el.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        opts.onArchive();
+                    });
+                }
+
+                /* ── Konversi warna HEX <-> HSL (untuk slider tema) ── */
+                function hexToHsl(hex) {
+                    hex = (hex || "#888888").replace("#", "");
+                    if (hex.length === 3)
+                        hex = hex
+                            .split("")
+                            .map(function (c) {
+                                return c + c;
+                            })
+                            .join("");
+                    var r = parseInt(hex.substr(0, 2), 16) / 255,
+                        g = parseInt(hex.substr(2, 2), 16) / 255,
+                        b = parseInt(hex.substr(4, 2), 16) / 255;
+                    var max = Math.max(r, g, b),
+                        min = Math.min(r, g, b);
+                    var h = 0,
+                        s = 0,
+                        l = (max + min) / 2;
+                    if (max !== min) {
+                        var d = max - min;
+                        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                        switch (max) {
+                            case r:
+                                h = (g - b) / d + (g < b ? 6 : 0);
+                                break;
+                            case g:
+                                h = (b - r) / d + 2;
+                                break;
+                            case b:
+                                h = (r - g) / d + 4;
+                                break;
+                        }
+                        h *= 60;
+                    }
+                    return { h: h, s: s * 100, l: l * 100 };
+                }
+                function hslToHex(h, s, l) {
+                    h = ((h % 360) + 360) % 360;
+                    s = Math.max(0, Math.min(100, s)) / 100;
+                    l = Math.max(0, Math.min(100, l)) / 100;
+                    var c = (1 - Math.abs(2 * l - 1)) * s,
+                        x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
+                        m = l - c / 2,
+                        r = 0,
+                        g = 0,
+                        b = 0;
+                    if (h < 60) {
+                        r = c; g = x; b = 0;
+                    } else if (h < 120) {
+                        r = x; g = c; b = 0;
+                    } else if (h < 180) {
+                        r = 0; g = c; b = x;
+                    } else if (h < 240) {
+                        r = 0; g = x; b = c;
+                    } else if (h < 300) {
+                        r = x; g = 0; b = c;
+                    } else {
+                        r = c; g = 0; b = x;
+                    }
+                    function toHex(v) {
+                        var n = Math.max(0, Math.min(255, Math.round((v + m) * 255)));
+                        return n.toString(16).padStart(2, "0");
+                    }
+                    return "#" + toHex(r) + toHex(g) + toHex(b);
+                }
+
                 /* ── Toolbar handlers ── */
                 document
                     .getElementById("brun")
@@ -1723,15 +2315,6 @@
                     .addEventListener("click", clearConsole);
 
                 document
-                    .getElementById("bthm")
-                    .addEventListener("click", function () {
-                        state.ember = !state.ember;
-                        this.classList.toggle("on", state.ember);
-                        document.body.classList.toggle("theme-ember", state.ember);
-                        cm.refresh();
-                    });
-
-                document
                     .getElementById("brig")
                     .addEventListener("click", function () {
                         state.rigid = !state.rigid;
@@ -1774,8 +2357,9 @@
 
                 /* ── File Manager ── */
                 (function () {
-                    var LS_INDEX  = "jspg_files";
-                    var LS_ACTIVE = "jspg_active";
+                    var LS_INDEX   = "jspg_files";
+                    var LS_ACTIVE  = "jspg_active";
+                    var LS_ARCHIVE = "jspg_archive";
                     var LSC = function (n) { return "jspg_code:" + n; };
 
                     /* Init */
@@ -1786,6 +2370,14 @@
                     }
                     var active = localStorage.getItem(LS_ACTIVE) || files[0];
                     if (files.indexOf(active) === -1) active = files[0];
+
+                    /* Arsip: [{name, code}] */
+                    function loadArchive() {
+                        try { return JSON.parse(localStorage.getItem(LS_ARCHIVE) || "[]"); } catch(e) { return []; }
+                    }
+                    function saveArchive(arr) {
+                        localStorage.setItem(LS_ARCHIVE, JSON.stringify(arr));
+                    }
 
                     function saveActive() {
                         localStorage.setItem(LSC(active), cm.getValue());
@@ -1814,13 +2406,49 @@
                         switchTo(name);
                     }
 
-                    function deleteFile(name) {
-                        if (files.length === 1) return;
+                    /* Hapus → arsip, bukan hapus beneran */
+                    function archiveFile(name) {
+                        if (files.length === 1) return; /* jangan arsip file terakhir */
+                        saveActive();
+                        var code = localStorage.getItem(LSC(name)) || "";
+                        var arc = loadArchive();
+                        /* hindari duplikat nama di arsip */
+                        var arcName = name;
+                        var cnt = 1;
+                        while (arc.some(function(a){ return a.name === arcName; })) {
+                            arcName = name + "-" + (++cnt);
+                        }
+                        arc.push({ name: arcName, code: code });
+                        saveArchive(arc);
                         files = files.filter(function (f) { return f !== name; });
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
                         localStorage.removeItem(LSC(name));
                         if (active === name) switchTo(files[0]);
                         else renderDrop();
+                    }
+
+                    /* Kembalikan dari arsip ke daftar file */
+                    function restoreFile(arcName) {
+                        var arc = loadArchive();
+                        var item = null;
+                        arc = arc.filter(function(a) { if(a.name===arcName){item=a;return false;} return true; });
+                        if (!item) return;
+                        saveArchive(arc);
+                        var finalName = arcName;
+                        var cnt2 = 1;
+                        while (files.indexOf(finalName) !== -1) finalName = arcName + "-" + (++cnt2);
+                        files.push(finalName);
+                        localStorage.setItem(LS_INDEX, JSON.stringify(files));
+                        localStorage.setItem(LSC(finalName), item.code);
+                        renderDrop();
+                        renderArchivePanel();
+                    }
+
+                    /* Hapus permanen dari arsip */
+                    function permDeleteFile(arcName) {
+                        var arc = loadArchive().filter(function(a){ return a.name !== arcName; });
+                        saveArchive(arc);
+                        renderArchivePanel();
                     }
 
                     function renameFile(oldName, newName) {
@@ -1860,7 +2488,6 @@
                                 lbl.className = "fdrop-name";
                                 lbl.textContent = name;
 
-                                /* fungsi aktifkan rename inline */
                                 function startRename() {
                                     lbl.contentEditable = "true";
                                     lbl.focus();
@@ -1870,7 +2497,6 @@
                                     window.getSelection().addRange(rng);
                                 }
 
-                                /* double-click nama → rename */
                                 lbl.addEventListener("dblclick", function (e) {
                                     e.stopPropagation();
                                     startRename();
@@ -1885,38 +2511,22 @@
                                     renderDrop();
                                 });
 
-                                /* tombol rename (pensil) */
                                 var ren = document.createElement("span");
                                 ren.className = "fdrop-action fdrop-ren";
-                                ren.title = "Rename (atau klik 2x nama)";
+                                ren.title = "Rename";
                                 ren.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
                                 ren.addEventListener("click", function (e) {
                                     e.stopPropagation();
                                     startRename();
                                 });
 
-                                /* tombol hapus (✕) */
+                                /* 1 klik → arsip (bukan hapus beneran) */
                                 var del = document.createElement("span");
                                 del.className = "fdrop-action fdrop-del";
-                                del.title = files.length === 1 ? "Tidak bisa hapus file terakhir" : "Klik 2 kali ya !";
-                                del.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-                                del.addEventListener("click", function (e) {
-                                    e.stopPropagation();
-                                    if (files.length === 1) return;
-                                    /* konfirmasi inline — tidak pakai confirm() agar dropdown tidak tertutup */
-                                    if (del.dataset.confirm === "1") {
-                                        deleteFile(name);
-                                    } else {
-                                        del.dataset.confirm = "1";
-                                        del.title = "Klik lagi untuk konfirmasi hapus";
-                                        del.style.color = "var(--red)";
-                                        del.style.opacity = "1";
-                                        setTimeout(function () {
-                                            del.dataset.confirm = "";
-                                            del.title = "Hapus file";
-                                            del.style.color = "";
-                                            del.style.opacity = "";
-                                        }, 2000);
+                                wireArchiveBtn(del, {
+                                    title: files.length === 1 ? "Tidak bisa hapus file terakhir" : "Pindah ke arsip",
+                                    onArchive: function () {
+                                        if (files.length > 1) archiveFile(name);
                                     }
                                 });
 
@@ -1942,12 +2552,65 @@
                         drop.appendChild(btnNew);
                     }
 
+                    /* ── Panel Arsip ── */
+                    function renderArchivePanel() {
+                        var list = document.getElementById("arc-list");
+                        list.innerHTML = "";
+                        var arc = loadArchive();
+                        document.getElementById("arc-head-title").textContent =
+                            "Arsip File (" + arc.length + ")";
+                        if (!arc.length) {
+                            var emp = document.createElement("div");
+                            emp.className = "arc-empty";
+                            emp.textContent = "Belum ada file di arsip";
+                            list.appendChild(emp);
+                            return;
+                        }
+                        arc.forEach(function(item) {
+                            var row = document.createElement("div");
+                            row.className = "arc-item";
+
+                            var nm = document.createElement("span");
+                            nm.className = "arc-item-name";
+                            nm.textContent = item.name;
+
+                            var rest = document.createElement("button");
+                            rest.className = "arc-restore";
+                            rest.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.27"/></svg> Kembalikan';
+                            rest.addEventListener("click", function() { restoreFile(item.name); });
+
+                            var perm = document.createElement("button");
+                            perm.className = "arc-perm";
+                            perm.title = "Hapus permanen";
+                            perm.innerHTML = ICON_X;
+                            perm.addEventListener("click", function() { permDeleteFile(item.name); });
+
+                            row.appendChild(nm);
+                            row.appendChild(rest);
+                            row.appendChild(perm);
+                            list.appendChild(row);
+                        });
+                    }
+
+                    function openArchive() {
+                        renderArchivePanel();
+                        document.getElementById("arc-overlay").classList.add("show");
+                    }
+                    function closeArchive() {
+                        document.getElementById("arc-overlay").classList.remove("show");
+                    }
+
+                    document.getElementById("barc").addEventListener("click", openArchive);
+                    document.getElementById("arc-close").addEventListener("click", closeArchive);
+                    document.getElementById("arc-overlay").addEventListener("click", function(e) {
+                        if (e.target === this) closeArchive();
+                    });
+
                     /* Load file aktif saat buka */
                     var initCode = localStorage.getItem(LSC(active));
                     if (initCode !== null) {
                         cm.setValue(initCode);
                     } else if (active === "file-1") {
-                        /* migrasi dari localStorage lama (jspg_code) */
                         var legacy = localStorage.getItem("jspg_code");
                         if (legacy) {
                             cm.setValue(legacy);
@@ -1957,14 +2620,804 @@
                     document.getElementById("bfile-label").textContent = active;
                     renderDrop();
 
-                    /* auto-save per file */
                     cm.on("change", function () {
                         clearTimeout(window._fsSaveTimer);
                         window._fsSaveTimer = setTimeout(saveActive, 500);
                     });
                 })();
 
-                runCode();
+                /* ── Theme Manager ── */
+                (function () {
+                    var LS_THEMES = "jspg_themes";
+                    var LS_ACTIVE_THEME = "jspg_active_theme";
+
+                    /* Variabel CSS yang membentuk satu tema */
+                    var THEME_VAR_KEYS = [
+                        "b0", "b0s", "b1", "b2", "b3", "b4",
+                        "f1", "f2", "f3", "f4",
+                        "red", "green", "yel", "blu", "pur", "aqu", "ora", "gry",
+                        "acc",
+                    ];
+
+                    /* Dipakai untuk preview titik warna di daftar tema */
+                    var SWATCH_KEYS = ["b1", "pur", "blu", "green", "ora", "red"];
+
+                    /* Tema bawaan — nilai diambil dari :root & body.theme-ember */
+                    var BUILTIN_THEMES = {
+                        ocean: {
+                            id: "ocean",
+                            name: "Ocean",
+                            builtin: true,
+                            colors: {
+                                b0: "#0e1520", b0s: "#121c2e", b1: "#1a2540", b2: "#253050", b3: "#334068", b4: "#4d6080",
+                                f1: "#8a9ab0", f2: "#b8d0e8", f3: "#90aac8", f4: "#6080a0",
+                                red: "#d09098", green: "#72b89e", yel: "#a898d8", blu: "#82b0cc",
+                                pur: "#a090c8", aqu: "#72aab8", ora: "#c090a8", gry: "#607090",
+                                acc: "#82b0cc",
+                            },
+                        },
+                        ember: {
+                            id: "ember",
+                            name: "Ember",
+                            builtin: true,
+                            colors: {
+                                b0: "#0e1520", b0s: "#121c2e", b1: "#1a2540", b2: "#253050", b3: "#334068", b4: "#4d6080",
+                                f1: "#8a9ab0", f2: "#b8d0e8", f3: "#90aac8", f4: "#6080a0",
+                                red: "#d89098", green: "#90b098", yel: "#c088b8", blu: "#b090c8",
+                                pur: "#c880b0", aqu: "#80a0b0", ora: "#d890a0", gry: "#707080",
+                                acc: "#c880b0",
+                            },
+                        },
+                    };
+
+                    /* Kategori warna untuk editor — diurutkan dari elemen besar (latar)
+                       ke elemen kecil (aksen), supaya user mengatur fondasi dulu sebelum
+                       detail kode */
+                    var COLOR_GROUPS = [
+                        {
+                            name: "Latar Belakang",
+                            keys: [
+                                { k: "b0", l: "Latar utama" },
+                                { k: "b0s", l: "Latar panel" },
+                                { k: "b1", l: "Latar elemen" },
+                                { k: "b2", l: "Hover / border" },
+                                { k: "b3", l: "Border aktif" },
+                                { k: "b4", l: "Border terang" },
+                            ],
+                        },
+                        {
+                            name: "Teks",
+                            keys: [
+                                { k: "f1", l: "Teks utama" },
+                                { k: "f2", l: "Teks terang" },
+                                { k: "f3", l: "Teks sekunder" },
+                                { k: "f4", l: "Teks redup" },
+                            ],
+                        },
+                        {
+                            name: "Warna Kode (Syntax)",
+                            keys: [
+                                { k: "pur", l: "Keyword" },
+                                { k: "blu", l: "Variabel" },
+                                { k: "green", l: "String" },
+                                { k: "ora", l: "Angka" },
+                                { k: "yel", l: "Definisi / Operator" },
+                                { k: "aqu", l: "Builtin / Meta" },
+                                { k: "red", l: "Tag / Error" },
+                                { k: "gry", l: "Komentar" },
+                            ],
+                        },
+                        {
+                            name: "Aksen",
+                            keys: [{ k: "acc", l: "Aksen UI" }],
+                        },
+                    ];
+
+                    function loadCustomThemes() {
+                        try {
+                            return JSON.parse(localStorage.getItem(LS_THEMES) || "[]");
+                        } catch (e) {
+                            return [];
+                        }
+                    }
+                    function saveCustomThemes(list) {
+                        localStorage.setItem(LS_THEMES, JSON.stringify(list));
+                    }
+                    function getAllThemes() {
+                        return [BUILTIN_THEMES.ocean, BUILTIN_THEMES.ember].concat(loadCustomThemes());
+                    }
+                    function getActiveThemeId() {
+                        return localStorage.getItem(LS_ACTIVE_THEME) || "ember";
+                    }
+                    function resolveTheme(id) {
+                        var all = getAllThemes();
+                        for (var i = 0; i < all.length; i++) {
+                            if (all[i].id === id) return all[i];
+                        }
+                        return BUILTIN_THEMES.ember;
+                    }
+
+                    /* Terapkan tema ke seluruh UI + CodeMirror */
+                    function applyTheme(theme) {
+                        THEME_VAR_KEYS.forEach(function (k) {
+                            document.body.style.removeProperty("--" + k);
+                        });
+                        document.body.classList.remove("theme-ember");
+                        if (theme.id === "ember") {
+                            document.body.classList.add("theme-ember");
+                        } else if (theme.id !== "ocean") {
+                            THEME_VAR_KEYS.forEach(function (k) {
+                                if (theme.colors[k])
+                                    document.body.style.setProperty("--" + k, theme.colors[k]);
+                            });
+                        }
+                        localStorage.setItem(LS_ACTIVE_THEME, theme.id);
+                        cm.refresh();
+                        renderThemeDrop();
+                    }
+
+                    /* ── Dropdown daftar tema ── */
+                    function renderThemeDrop() {
+                        var drop = document.getElementById("thdrop");
+                        drop.innerHTML = "";
+                        var all = getAllThemes(),
+                            activeId = getActiveThemeId();
+                        all.forEach(function (theme) {
+                            var row = document.createElement("div");
+                            row.className = "fdrop-file" + (theme.id === activeId ? " active" : "");
+
+                            var sw = document.createElement("span");
+                            sw.className = "thswatches";
+                            SWATCH_KEYS.forEach(function (k) {
+                                var d = document.createElement("span");
+                                d.className = "thdot";
+                                d.style.background = theme.colors[k];
+                                sw.appendChild(d);
+                            });
+
+                            var lbl = document.createElement("span");
+                            lbl.className = "fdrop-name";
+                            lbl.textContent = theme.name;
+
+                            row.appendChild(sw);
+                            row.appendChild(lbl);
+
+                            if (!theme.builtin) {
+                                /* Rename inline — dideklarasi dulu sebelum dipakai */
+                                function startThemeRename() {
+                                    lbl.contentEditable = "true";
+                                    lbl.focus();
+                                    var rng = document.createRange();
+                                    rng.selectNodeContents(lbl);
+                                    window.getSelection().removeAllRanges();
+                                    window.getSelection().addRange(rng);
+                                }
+
+                                /* Double-click nama → rename */
+                                lbl.addEventListener("dblclick", function(e) {
+                                    e.stopPropagation();
+                                    startThemeRename();
+                                });
+                                lbl.addEventListener("keydown", function(e) {
+                                    if (e.key === "Enter") { e.preventDefault(); lbl.blur(); }
+                                    if (e.key === "Escape") { lbl.textContent = theme.name; lbl.blur(); }
+                                });
+                                lbl.addEventListener("blur", function() {
+                                    lbl.contentEditable = "false";
+                                    var newName = lbl.textContent.trim().slice(0, 32);
+                                    if (newName && newName !== theme.name) {
+                                        var custom = loadCustomThemes();
+                                        custom.forEach(function(t) { if(t.id === theme.id) t.name = newName; });
+                                        saveCustomThemes(custom);
+                                        theme.name = newName;
+                                    }
+                                    renderThemeDrop();
+                                });
+
+                                /* Grup tombol aksi — selalu visible (tidak pakai fdrop-action opacity:0) */
+                                var acts = document.createElement("span");
+                                acts.style.cssText = "display:flex;gap:2px;flex-shrink:0;";
+
+                                /* Tombol rename (pensil) */
+                                var ren = document.createElement("span");
+                                ren.className = "fdrop-action fdrop-ren";
+                                ren.style.opacity = "0.6";
+                                ren.title = "Rename tema (atau klik 2x nama)";
+                                ren.innerHTML = ICON_PENCIL;
+                                ren.addEventListener("click", function(e) {
+                                    e.stopPropagation();
+                                    startThemeRename();
+                                });
+                                acts.appendChild(ren);
+
+                                /* Tombol edit warna */
+                                var edit = document.createElement("span");
+                                edit.className = "fdrop-action fdrop-ren";
+                                edit.style.opacity = "0.6";
+                                edit.title = "Edit warna tema";
+                                edit.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>';
+                                edit.addEventListener("click", function (e) {
+                                    e.stopPropagation();
+                                    openThemeEditor(theme);
+                                });
+                                acts.appendChild(edit);
+
+                                /* Tombol hapus → arsip */
+                                var del = document.createElement("span");
+                                del.className = "fdrop-action fdrop-del";
+                                del.style.opacity = "0.6";
+                                wireArchiveBtn(del, {
+                                    title: "Pindah ke arsip tema",
+                                    onArchive: function() { archiveTheme(theme.id); }
+                                });
+                                acts.appendChild(del);
+
+                                row.appendChild(acts);
+                            }
+
+                            row.addEventListener("click", function () {
+                                if (theme.id !== getActiveThemeId()) applyTheme(theme);
+                            });
+                            drop.appendChild(row);
+                        });
+
+                        var sep = document.createElement("div");
+                        sep.className = "fdrop-sep";
+                        drop.appendChild(sep);
+
+                        var btnNew = document.createElement("div");
+                        btnNew.className = "fdrop-new";
+                        btnNew.innerHTML = ICON_PLUS + " Tema baru";
+                        btnNew.addEventListener("click", function () {
+                            openThemeEditor(null);
+                        });
+                        drop.appendChild(btnNew);
+
+                        /* Tombol arsip tema */
+                        var arcThm = loadThemeArchive();
+                        if (arcThm.length > 0) {
+                            var btnArcThm = document.createElement("div");
+                            btnArcThm.className = "fdrop-new";
+                            btnArcThm.style.color = "var(--f4)";
+                            btnArcThm.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Arsip tema (' + arcThm.length + ')';
+                            btnArcThm.addEventListener("click", function() { openThemeArchivePanel(); });
+                            drop.appendChild(btnArcThm);
+                        }
+                    }
+
+                    var LS_THEME_ARC = "jspg_theme_archive";
+                    function loadThemeArchive() {
+                        try { return JSON.parse(localStorage.getItem(LS_THEME_ARC) || "[]"); } catch(e) { return []; }
+                    }
+                    function saveThemeArchive(arr) { localStorage.setItem(LS_THEME_ARC, JSON.stringify(arr)); }
+
+                    function archiveTheme(id) {
+                        var custom = loadCustomThemes();
+                        var found = null;
+                        custom = custom.filter(function(t){ if(t.id===id){found=t;return false;} return true; });
+                        if (!found) return;
+                        saveCustomThemes(custom);
+                        var arc = loadThemeArchive();
+                        arc.push(found);
+                        saveThemeArchive(arc);
+                        if (getActiveThemeId() === id) applyTheme(BUILTIN_THEMES.ocean);
+                        else renderThemeDrop();
+                    }
+
+                    function restoreTheme(id) {
+                        var arc = loadThemeArchive();
+                        var found = null;
+                        arc = arc.filter(function(t){ if(t.id===id){found=t;return false;} return true; });
+                        if (!found) return;
+                        saveThemeArchive(arc);
+                        var custom = loadCustomThemes();
+                        custom.push(found);
+                        saveCustomThemes(custom);
+                        renderThemeDrop();
+                        renderThemeArchivePanel();
+                    }
+
+                    function permDeleteTheme(id) {
+                        var arc = loadThemeArchive().filter(function(t){ return t.id !== id; });
+                        saveThemeArchive(arc);
+                        renderThemeArchivePanel();
+                    }
+
+                    function openThemeArchivePanel() {
+                        document.getElementById("arc-head-title").textContent = "";
+                        renderThemeArchivePanel();
+                        document.getElementById("arc-overlay").classList.add("show");
+                    }
+
+                    function renderThemeArchivePanel() {
+                        var list = document.getElementById("arc-list");
+                        list.innerHTML = "";
+                        var arc = loadThemeArchive();
+                        document.getElementById("arc-head-title").textContent =
+                            "Arsip Tema (" + arc.length + ")";
+                        if (!arc.length) {
+                            var emp = document.createElement("div");
+                            emp.className = "arc-empty";
+                            emp.textContent = "Belum ada tema di arsip";
+                            list.appendChild(emp);
+                            return;
+                        }
+                        arc.forEach(function(theme) {
+                            var row = document.createElement("div");
+                            row.className = "arc-item";
+
+                            var sw = document.createElement("span");
+                            sw.className = "thswatches";
+                            sw.style.flexShrink = "0";
+                            SWATCH_KEYS.forEach(function(k) {
+                                var d = document.createElement("span");
+                                d.className = "thdot";
+                                d.style.background = theme.colors[k] || "#888";
+                                sw.appendChild(d);
+                            });
+
+                            var nm = document.createElement("span");
+                            nm.className = "arc-item-name";
+                            nm.textContent = theme.name;
+
+                            var rest = document.createElement("button");
+                            rest.className = "arc-restore";
+                            rest.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.27"/></svg> Kembalikan';
+                            rest.addEventListener("click", function() { restoreTheme(theme.id); });
+
+                            var perm = document.createElement("button");
+                            perm.className = "arc-perm";
+                            perm.title = "Hapus permanen";
+                            perm.innerHTML = ICON_X;
+                            perm.addEventListener("click", function() { permDeleteTheme(theme.id); });
+
+                            row.appendChild(sw);
+                            row.appendChild(nm);
+                            row.appendChild(rest);
+                            row.appendChild(perm);
+                            list.appendChild(row);
+                        });
+                    }
+
+                    /* ── Editor tema (panel sliding) ── */
+                    var editorColors = {},
+                        editorHSL = {},
+                        editingThemeId = null;
+
+                    function openThemeEditor(theme) {
+                        var base = theme ? theme.colors : resolveTheme(getActiveThemeId()).colors;
+                        editorColors = {};
+                        editorHSL = {};
+                        THEME_VAR_KEYS.forEach(function (k) {
+                            var hex = (base[k] || "#888888").toLowerCase();
+                            editorColors[k] = hex;
+                            editorHSL[k] = hexToHsl(hex);
+                        });
+                        editingThemeId = theme ? theme.id : null;
+                        document.getElementById("thed-name").textContent = theme
+                            ? theme.name
+                            : "Tema Baru " + (loadCustomThemes().length + 1);
+                        renderThedBody();
+                        applyEditorColorsLive();
+                        document.getElementById("thed-overlay").classList.add("show");
+                    }
+
+                    function closeThemeEditor(revert) {
+                        document.getElementById("thed-overlay").classList.remove("show");
+                        if (revert) applyTheme(resolveTheme(getActiveThemeId()));
+                    }
+
+                    function applyEditorColorsLive() {
+                        document.body.classList.remove("theme-ember");
+                        THEME_VAR_KEYS.forEach(function (k) {
+                            document.body.style.setProperty("--" + k, editorColors[k]);
+                        });
+                    }
+
+                    function renderThedBody() {
+                        var body = document.getElementById("thed-body");
+                        body.innerHTML = "";
+                        COLOR_GROUPS.forEach(function (group) {
+                            var gh = document.createElement("div");
+                            gh.className = "thgroup-h";
+                            gh.textContent = group.name;
+                            body.appendChild(gh);
+                            group.keys.forEach(function (item) {
+                                body.appendChild(buildColorRow(item.k, item.l));
+                            });
+                        });
+                    }
+
+                    /* Satu baris kategori warna: swatch + label + hex, klik untuk
+                       membuka color picker visual (canvas HSV + slider hue + input hex) */
+                    function buildColorRow(key, label) {
+                        var wrap = document.createElement("div");
+                        wrap.className = "throw";
+                        wrap.dataset.key = key;
+
+                        var head = document.createElement("div");
+                        head.className = "throw-h";
+
+                        var sw = document.createElement("span");
+                        sw.className = "thsw";
+                        sw.style.background = editorColors[key];
+
+                        var lbl = document.createElement("span");
+                        lbl.className = "thlabel";
+                        lbl.textContent = label;
+
+                        var hex = document.createElement("span");
+                        hex.className = "thhex";
+                        hex.textContent = editorColors[key];
+
+                        var chk = document.createElement("span");
+                        chk.className = "thok";
+                        chk.innerHTML = ICON_CHECK;
+                        chk.style.visibility = "hidden";
+
+                        head.appendChild(sw);
+                        head.appendChild(lbl);
+                        head.appendChild(hex);
+                        head.appendChild(chk);
+                        wrap.appendChild(head);
+
+                        var picker = document.createElement("div");
+                        picker.className = "thpicker";
+
+                        /* ── Color Picker UI ── */
+                        var cpkWrap = document.createElement("div");
+                        cpkWrap.className = "cpk-wrap";
+
+                        /* Canvas: area pilih saturasi + brightness */
+                        var canvasWrap = document.createElement("div");
+                        canvasWrap.className = "cpk-canvas-wrap";
+
+                        var canvas = document.createElement("canvas");
+                        canvas.className = "cpk-canvas";
+                        canvas.width = 300;
+                        canvas.height = 140;
+
+                        var thumb = document.createElement("div");
+                        thumb.className = "cpk-thumb";
+
+                        canvasWrap.appendChild(canvas);
+                        canvasWrap.appendChild(thumb);
+
+                        /* Slider hue */
+                        var hueWrap = document.createElement("div");
+                        hueWrap.className = "cpk-hue-wrap";
+                        var hueThumb = document.createElement("div");
+                        hueThumb.className = "cpk-hue-thumb";
+                        hueWrap.appendChild(hueThumb);
+
+                        /* Hex input row */
+                        var hexRow = document.createElement("div");
+                        hexRow.className = "cpk-hex-row";
+                        var hexSwatch = document.createElement("div");
+                        hexSwatch.className = "cpk-swatch";
+                        var hexInput = document.createElement("input");
+                        hexInput.className = "cpk-hex-input";
+                        hexInput.type = "text";
+                        hexInput.maxLength = 7;
+                        hexInput.spellcheck = false;
+                        hexRow.appendChild(hexSwatch);
+                        hexRow.appendChild(hexInput);
+
+                        cpkWrap.appendChild(canvasWrap);
+                        cpkWrap.appendChild(hueWrap);
+                        cpkWrap.appendChild(hexRow);
+
+                        /* State picker internal */
+                        var ph = editorHSL[key].h;  /* hue 0-360 */
+                        var ps = editorHSL[key].s / 100; /* sat 0-1 */
+                        var pv = editorHSL[key].l / 100; /* val 0-1 (pakai L sebagai approx) */
+                        /* Convert HSL to HSV untuk inisialisasi */
+                        (function() {
+                            var h = editorHSL[key].h;
+                            var sl = editorHSL[key].s / 100;
+                            var l  = editorHSL[key].l / 100;
+                            var v  = l + sl * Math.min(l, 1 - l);
+                            ps = v === 0 ? 0 : 2 * (1 - l / v);
+                            pv = v;
+                            ph = h;
+                        })();
+
+                        function drawCanvas() {
+                            var ctx = canvas.getContext("2d");
+                            var w = canvas.width, h = canvas.height;
+                            /* Background: hue color */
+                            ctx.clearRect(0, 0, w, h);
+                            var baseColor = "hsl(" + ph + ",100%,50%)";
+                            ctx.fillStyle = baseColor;
+                            ctx.fillRect(0, 0, w, h);
+                            /* White gradient left to right */
+                            var gW = ctx.createLinearGradient(0, 0, w, 0);
+                            gW.addColorStop(0, "rgba(255,255,255,1)");
+                            gW.addColorStop(1, "rgba(255,255,255,0)");
+                            ctx.fillStyle = gW;
+                            ctx.fillRect(0, 0, w, h);
+                            /* Black gradient top to bottom */
+                            var gB = ctx.createLinearGradient(0, 0, 0, h);
+                            gB.addColorStop(0, "rgba(0,0,0,0)");
+                            gB.addColorStop(1, "rgba(0,0,0,1)");
+                            ctx.fillStyle = gB;
+                            ctx.fillRect(0, 0, w, h);
+                            /* Thumb: pakai % supaya tidak offset saat canvas CSS size ≠ internal size */
+                            thumb.style.left = (ps * 100) + "%";
+                            thumb.style.top  = ((1 - pv) * 100) + "%";
+                        }
+
+                        function updateHueThumb() {
+                            hueThumb.style.left = ((ph / 360) * 100) + "%";
+                        }
+
+                        function hsvToHex(h, s, v) {
+                            /* HSV → RGB */
+                            var r, g, b;
+                            var i = Math.floor(h / 60) % 6;
+                            var f = h / 60 - Math.floor(h / 60);
+                            var p = v * (1 - s);
+                            var q = v * (1 - f * s);
+                            var t = v * (1 - (1 - f) * s);
+                            if (i === 0) { r=v; g=t; b=p; }
+                            else if (i === 1) { r=q; g=v; b=p; }
+                            else if (i === 2) { r=p; g=v; b=t; }
+                            else if (i === 3) { r=p; g=q; b=v; }
+                            else if (i === 4) { r=t; g=p; b=v; }
+                            else              { r=v; g=p; b=q; }
+                            function toH(x) { return Math.round(x*255).toString(16).padStart(2,"0"); }
+                            return "#" + toH(r) + toH(g) + toH(b);
+                        }
+
+                        function hexToHsv(hexStr) {
+                            hexStr = (hexStr || "#888").replace("#","");
+                            if (hexStr.length === 3) hexStr = hexStr.split("").map(function(c){return c+c;}).join("");
+                            var r = parseInt(hexStr.substr(0,2),16)/255;
+                            var g = parseInt(hexStr.substr(2,2),16)/255;
+                            var b = parseInt(hexStr.substr(4,2),16)/255;
+                            var max = Math.max(r,g,b), min = Math.min(r,g,b), d = max - min;
+                            var h = 0, s = max === 0 ? 0 : d/max, v = max;
+                            if (d !== 0) {
+                                if (max === r) h = ((g-b)/d + (g<b?6:0)) * 60;
+                                else if (max === g) h = ((b-r)/d + 2) * 60;
+                                else h = ((r-g)/d + 4) * 60;
+                            }
+                            return {h: h, s: s, v: v};
+                        }
+
+                        function applyColor(hexStr) {
+                            editorColors[key] = hexStr;
+                            /* Convert hex to HSL for storage */
+                            editorHSL[key] = hexToHsl(hexStr);
+                            sw.style.background = hexStr;
+                            hex.textContent = hexStr;
+                            hexSwatch.style.background = hexStr;
+                            hexInput.value = hexStr;
+                            document.body.style.setProperty("--" + key, hexStr);
+                        }
+
+                        function onPickerChange() {
+                            var h6 = hsvToHex(ph, ps, pv);
+                            applyColor(h6);
+                            drawCanvas();
+                        }
+
+                        /* Canvas drag - pakai canvasWrap rect (CSS size), bukan canvas rect */
+                        var draggingCanvas = false;
+                        function handleCanvasDrag(e) {
+                            var rect = canvasWrap.getBoundingClientRect();
+                            var cx = (e.clientX - rect.left) / rect.width;
+                            var cy = (e.clientY - rect.top) / rect.height;
+                            ps = Math.max(0, Math.min(1, cx));
+                            pv = Math.max(0, Math.min(1, 1 - cy));
+                            onPickerChange();
+                        }
+                        canvasWrap.addEventListener("pointerdown", function(e) {
+                            draggingCanvas = true;
+                            canvasWrap.setPointerCapture(e.pointerId);
+                            handleCanvasDrag(e);
+                        });
+                        canvasWrap.addEventListener("pointermove", function(e) {
+                            if (draggingCanvas) handleCanvasDrag(e);
+                        });
+                        canvasWrap.addEventListener("pointerup", function() { draggingCanvas = false; });
+                        canvasWrap.addEventListener("pointercancel", function() { draggingCanvas = false; });
+
+                        /* Hue slider drag */
+                        var draggingHue = false;
+                        function handleHueDrag(e) {
+                            var rect = hueWrap.getBoundingClientRect();
+                            var cx = (e.clientX - rect.left) / rect.width;
+                            ph = Math.max(0, Math.min(360, cx * 360));
+                            updateHueThumb();
+                            onPickerChange();
+                        }
+                        hueWrap.addEventListener("pointerdown", function(e) {
+                            draggingHue = true;
+                            hueWrap.setPointerCapture(e.pointerId);
+                            handleHueDrag(e);
+                        });
+                        hueWrap.addEventListener("pointermove", function(e) {
+                            if (draggingHue) handleHueDrag(e);
+                        });
+                        hueWrap.addEventListener("pointerup", function() { draggingHue = false; });
+                        hueWrap.addEventListener("pointercancel", function() { draggingHue = false; });
+
+                        /* Hex input */
+                        hexInput.addEventListener("input", function() {
+                            var v = hexInput.value.trim();
+                            if (!v.startsWith("#")) v = "#" + v;
+                            if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+                                var hsv = hexToHsv(v);
+                                ph = hsv.h; ps = hsv.s; pv = hsv.v;
+                                applyColor(v.toLowerCase());
+                                drawCanvas();
+                                updateHueThumb();
+                            }
+                        });
+                        hexInput.addEventListener("blur", function() {
+                            hexInput.value = editorColors[key];
+                        });
+
+                        /* Tombol Cocok */
+                        var confirmBtn = document.createElement("button");
+                        confirmBtn.className = "thconfirm";
+                        confirmBtn.innerHTML = ICON_CHECK + " Cocok, lanjut";
+                        confirmBtn.addEventListener("click", function (e) {
+                            e.stopPropagation();
+                            wrap.classList.remove("expanded");
+                            chk.style.visibility = "visible";
+                        });
+
+                        picker.appendChild(cpkWrap);
+                        picker.appendChild(confirmBtn);
+                        wrap.appendChild(picker);
+
+                        /* Expand / collapse */
+                        head.addEventListener("click", function () {
+                            var wasOpen = wrap.classList.contains("expanded"),
+                                body = document.getElementById("thed-body");
+                            Array.prototype.forEach.call(
+                                body.querySelectorAll(".throw.expanded"),
+                                function (r) { r.classList.remove("expanded"); }
+                            );
+                            if (!wasOpen) {
+                                wrap.classList.add("expanded");
+                                /* Init tampilan picker setelah visible */
+                                requestAnimationFrame(function() {
+                                    var hsv = hexToHsv(editorColors[key]);
+                                    ph = hsv.h; ps = hsv.s; pv = hsv.v;
+                                    drawCanvas();
+                                    updateHueThumb();
+                                    hexSwatch.style.background = editorColors[key];
+                                    hexInput.value = editorColors[key];
+                                });
+                            }
+                        });
+
+                        return wrap;
+                    }
+
+                    function saveTheme() {
+                        var name =
+                            document.getElementById("thed-name").textContent
+                                .trim()
+                                .slice(0, 32) || "Tema";
+                        var custom = loadCustomThemes();
+                        var id = editingThemeId || "custom-" + Date.now();
+                        var themeObj = { id: id, name: name, colors: {} };
+                        THEME_VAR_KEYS.forEach(function (k) {
+                            themeObj.colors[k] = editorColors[k];
+                        });
+                        var idx = -1;
+                        custom.forEach(function (t, i) {
+                            if (t.id === id) idx = i;
+                        });
+                        if (idx >= 0) custom[idx] = themeObj;
+                        else custom.push(themeObj);
+                        saveCustomThemes(custom);
+                        closeThemeEditor(false);
+                        applyTheme(themeObj);
+                    }
+
+                    /* ── Wiring tombol panel editor ── */
+                    document.getElementById("thed-cancel").addEventListener("click", function () {
+                        closeThemeEditor(true);
+                    });
+                    document.getElementById("thed-save").addEventListener("click", saveTheme);
+                    document.getElementById("thed-overlay").addEventListener("click", function (e) {
+                        if (e.target === this) closeThemeEditor(true);
+                    });
+                    document.getElementById("thed-name").addEventListener("keydown", function (e) {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            this.blur();
+                        }
+                    });
+
+                    /* ── Tombol Copy kode warna ── */
+                    var _toastTimer = null;
+                    function showToast(msg) {
+                        var t = document.getElementById("copy-toast");
+                        t.textContent = msg;
+                        t.classList.add("show");
+                        clearTimeout(_toastTimer);
+                        _toastTimer = setTimeout(function() { t.classList.remove("show"); }, 2200);
+                    }
+
+                    /* Peta key → label Indonesia (urut sesuai COLOR_GROUPS) */
+                    var KEY_LABELS = {
+                        b0:    "Latar utama",
+                        b0s:   "Latar panel",
+                        b1:    "Latar elemen",
+                        b2:    "Hover / border",
+                        b3:    "Border aktif",
+                        b4:    "Border terang",
+                        f1:    "Teks utama",
+                        f2:    "Teks terang",
+                        f3:    "Teks sekunder",
+                        f4:    "Teks redup",
+                        pur:   "Keyword",
+                        blu:   "Variabel",
+                        green: "String",
+                        ora:   "Angka",
+                        yel:   "Definisi / Operator",
+                        aqu:   "Builtin / Meta",
+                        red:   "Tag / Error",
+                        gry:   "Komentar",
+                        acc:   "Aksen UI",
+                    };
+
+                    document.getElementById("thed-copy").addEventListener("click", function() {
+                        var themeName = document.getElementById("thed-name").textContent.trim() || "Tema";
+                        var lines = ["Tema: " + themeName, ""];
+
+                        /* Tulis per grup supaya output lebih rapi */
+                        var groups = [
+                            { name: "Latar Belakang", keys: ["b0","b0s","b1","b2","b3","b4"] },
+                            { name: "Teks",           keys: ["f1","f2","f3","f4"] },
+                            { name: "Warna Kode (Syntax)", keys: ["pur","blu","green","ora","yel","aqu","red","gry"] },
+                            { name: "Aksen",          keys: ["acc"] },
+                        ];
+                        groups.forEach(function(g) {
+                            lines.push("── " + g.name + " ──");
+                            g.keys.forEach(function(k) {
+                                var label = KEY_LABELS[k] || k;
+                                var color = editorColors[k] || "—";
+                                lines.push(label + ": " + color);
+                            });
+                            lines.push("");
+                        });
+
+                        var text = lines.join("\n").trimEnd();
+                        var btn = document.getElementById("thed-copy");
+
+                        navigator.clipboard.writeText(text).then(function() {
+                            /* Animasi ikon berubah jadi centang sebentar */
+                            var origHTML = btn.innerHTML;
+                            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>';
+                            btn.classList.add("copied");
+                            setTimeout(function() {
+                                btn.innerHTML = origHTML;
+                                btn.classList.remove("copied");
+                            }, 1800);
+                            showToast("✓ Kode warna " + themeName + " disalin!");
+                        }).catch(function() {
+                            /* Fallback untuk browser yang blokir clipboard */
+                            var ta = document.createElement("textarea");
+                            ta.value = text;
+                            ta.style.cssText = "position:fixed;opacity:0;top:0;left:0;";
+                            document.body.appendChild(ta);
+                            ta.select();
+                            document.execCommand("copy");
+                            document.body.removeChild(ta);
+                            showToast("✓ Kode warna disalin!");
+                        });
+                    });
+
+                    /* Muat tema aktif saat startup */
+                    applyTheme(resolveTheme(getActiveThemeId()));
+                })();
             })();
         </script>
     </body>
