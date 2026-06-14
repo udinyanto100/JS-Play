@@ -135,6 +135,160 @@
                 min-height: 0;
             }
 
+            /* ── File Manager ── */
+            #bfile-wrap {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+            #bfile {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                height: 26px;
+                padding: 0 7px;
+                flex-shrink: 0;
+                border-radius: var(--rad);
+                border: 1px solid var(--b2);
+                background: var(--b1);
+                color: var(--f2);
+                cursor: pointer;
+                font-family: inherit;
+                font-size: 11.5px;
+                white-space: nowrap;
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                transition: background 0.12s, color 0.12s, border-color 0.12s;
+            }
+            #bfile:hover, #bfile-wrap:hover #bfile {
+                background: var(--b2);
+                color: var(--f1);
+                border-color: var(--b3);
+            }
+            #bfile svg {
+                width: 12px;
+                height: 12px;
+                flex-shrink: 0;
+                opacity: 0.7;
+            }
+            #fdrop {
+                display: none;
+                position: absolute;
+                top: 100%;          /* nempel langsung, tanpa gap */
+                left: 0;
+                min-width: 180px;
+                background: var(--b0s);
+                border: 1px solid var(--b2);
+                border-radius: var(--rad);
+                box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+                z-index: 100;
+                padding: 4px;
+                flex-direction: column;
+                gap: 2px;
+                /* jembatan hover: pseudo-element di atas supaya mouse tidak "keluar" */
+            }
+            /* jembatan invisible di antara tombol dan dropdown */
+            #bfile-wrap::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                height: 8px;        /* area jembatan */
+                background: transparent;
+            }
+            #bfile-wrap:hover #fdrop,
+            #fdrop:hover {
+                display: flex;
+            }
+            .fdrop-file {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 5px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+                color: var(--f2);
+                transition: background 0.1s, color 0.1s;
+                user-select: none;
+            }
+            .fdrop-file:hover {
+                background: var(--b2);
+                color: var(--f1);
+            }
+            .fdrop-file.active {
+                background: var(--b2);
+                color: var(--acc);
+            }
+            .fdrop-file svg {
+                width: 12px;
+                height: 12px;
+                flex-shrink: 0;
+                opacity: 0.6;
+            }
+            .fdrop-name {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .fdrop-name[contenteditable="true"] {
+                outline: none;
+                background: var(--b1);
+                border-radius: 3px;
+                padding: 0 3px;
+                color: var(--f1);
+            }
+            .fdrop-action {
+                opacity: 0;
+                padding: 2px;
+                border-radius: 3px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: opacity 0.1s, color 0.1s, background 0.1s;
+                flex-shrink: 0;
+                cursor: pointer;
+            }
+            .fdrop-file:hover .fdrop-action {
+                opacity: 0.5;
+            }
+            .fdrop-action:hover {
+                opacity: 1 !important;
+                background: var(--b3);
+            }
+            .fdrop-ren {
+                color: var(--aqu);
+            }
+            .fdrop-del {
+                color: var(--red);
+            }
+            .fdrop-sep {
+                height: 1px;
+                background: var(--b2);
+                margin: 3px 0;
+            }
+            .fdrop-new {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 5px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+                color: var(--aqu);
+                transition: background 0.1s;
+            }
+            .fdrop-new:hover {
+                background: var(--b2);
+            }
+            .fdrop-new svg {
+                width: 12px;
+                height: 12px;
+            }
+
             /* ── Toolbar ── */
             #tb {
                 display: flex;
@@ -626,56 +780,19 @@
     <body class="theme-ember">
         <div id="app">
             <div id="tb">
-                <button class="btn run" id="brun" title="Run (Ctrl+Enter)">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M6 4l13 8-13 8z" />
-                    </svg>
-                </button>
-                <button class="btn on" id="baut" title="Auto run">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" />
-                        <path d="M21 3v5h-5" />
-                    </svg>
-                </button>
-                <button class="btn" id="bfmt" title="Rapikan kode">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path
-                            d="M5 3v4M3 5h4M13 3l1.6 4.7L19 9l-4.4 1.6L13 15l-1.6-4.4L7 9l4.4-1.6z"
-                        />
-                        <path d="M6 17v4M4 19h4" />
-                    </svg>
-                </button>
-                <div class="sep"></div>
+                <!-- KIRI: file | no baris | word wrap | rapikan | hapus -->
+                <div id="bfile-wrap">
+                    <button id="bfile" title="File aktif — hover untuk daftar file">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                            <polyline points="13 2 13 9 20 9"/>
+                        </svg>
+                        <span id="bfile-label">file-1</span>
+                    </button>
+                    <div id="fdrop"><!-- diisi JS --></div>
+                </div>
                 <button class="btn on" id="bln" title="Nomor baris">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="9" x2="19" y2="9" />
                         <line x1="5" y1="15" x2="19" y2="15" />
                         <line x1="9" y1="4" x2="7" y2="20" />
@@ -683,68 +800,59 @@
                     </svg>
                 </button>
                 <button class="btn" id="bww" title="Word Wrap">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 6h18" />
                         <path d="M3 12h13a2 2 0 0 1 0 4h-3" />
                         <polyline points="11 14 9 16 11 18" />
                         <path d="M3 18h7" />
                     </svg>
                 </button>
-                <div class="sp"></div>
+                <button class="btn" id="bfmt" title="Rapikan kode">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 3v4M3 5h4M13 3l1.6 4.7L19 9l-4.4 1.6L13 15l-1.6-4.4L7 9l4.4-1.6z" />
+                        <path d="M6 17v4M4 19h4" />
+                    </svg>
+                </button>
+                <div class="sep"></div>
                 <button class="btn" id="bclr" title="Bersihkan console">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="3 6 5 6 21 6" />
-                        <path
-                            d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"
-                        />
+                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" />
                         <line x1="10" y1="11" x2="10" y2="17" />
                         <line x1="14" y1="11" x2="14" y2="17" />
                     </svg>
                 </button>
+
+                <!-- SPACER -->
+                <div class="sp"></div>
+
+                <!-- KANAN: manual run | auto run | kunci scroll | mode color -->
+                <button class="btn run" id="brun" title="Run (Ctrl+Enter)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 4l13 8-13 8z" />
+                    </svg>
+                </button>
+                <button class="btn on" id="baut" title="Auto run">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" />
+                        <path d="M21 3v5h-5" />
+                    </svg>
+                </button>
+                <button class="btn on" id="brig" title="Kunci Scroll Log">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="17" x2="12" y2="22"/>
+                        <path d="M5 17h14v-2a7 7 0 0 0-7-7 7 7 0 0 0-7 7v2z"/>
+                        <line x1="12" y1="3" x2="12" y2="8"/>
+                        <circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/>
+                    </svg>
+                </button>
                 <button class="btn on" id="bthm" title="Ganti tema warna kode">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="13.5" cy="6.5" r="2.5"/>
                         <circle cx="17.5" cy="10.5" r="2.5"/>
                         <circle cx="8.5" cy="7.5" r="2.5"/>
                         <circle cx="6.5" cy="12.5" r="2.5"/>
                         <path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
-                    </svg>
-                </button>
-                <button class="btn on" id="brig" title="Kunci Scroll Log">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <!-- pin / tack icon -->
-                        <line x1="12" y1="17" x2="12" y2="22"/>
-                        <path d="M5 17h14v-2a7 7 0 0 0-7-7 7 7 0 0 0-7 7v2z"/>
-                        <line x1="12" y1="3" x2="12" y2="8"/>
-                        <circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/>
                     </svg>
                 </button>
             </div>
@@ -1063,9 +1171,8 @@
                 }
 
                 /* ── CodeMirror init ── */
-                var savedCode = localStorage.getItem("jspg_code");
                 var cm = CodeMirror(document.getElementById("ed"), {
-                    value: savedCode !== null ? savedCode : STARTER,
+                    value: STARTER,
                     mode: "javascript",
                     theme: "gruvbox-dark",
                     lineNumbers: true,
@@ -1663,6 +1770,198 @@
                     }
                     dv.addEventListener("pointerup", end);
                     dv.addEventListener("pointercancel", end);
+                })();
+
+                /* ── File Manager ── */
+                (function () {
+                    var LS_INDEX  = "jspg_files";
+                    var LS_ACTIVE = "jspg_active";
+                    var LSC = function (n) { return "jspg_code:" + n; };
+
+                    /* Init */
+                    var files = JSON.parse(localStorage.getItem(LS_INDEX) || "null");
+                    if (!files || !files.length) {
+                        files = ["file-1"];
+                        localStorage.setItem(LS_INDEX, JSON.stringify(files));
+                    }
+                    var active = localStorage.getItem(LS_ACTIVE) || files[0];
+                    if (files.indexOf(active) === -1) active = files[0];
+
+                    function saveActive() {
+                        localStorage.setItem(LSC(active), cm.getValue());
+                        localStorage.setItem(LS_ACTIVE, active);
+                    }
+
+                    function switchTo(name) {
+                        saveActive();
+                        active = name;
+                        localStorage.setItem(LS_ACTIVE, active);
+                        var code = localStorage.getItem(LSC(active));
+                        cm.setValue(code !== null ? code : "");
+                        document.getElementById("bfile-label").textContent = active;
+                        renderDrop();
+                        cm.focus();
+                    }
+
+                    function newFile() {
+                        saveActive();
+                        var idx = 1;
+                        while (files.indexOf("file-" + idx) !== -1) idx++;
+                        var name = "file-" + idx;
+                        files.push(name);
+                        localStorage.setItem(LS_INDEX, JSON.stringify(files));
+                        localStorage.setItem(LSC(name), "");
+                        switchTo(name);
+                    }
+
+                    function deleteFile(name) {
+                        if (files.length === 1) return;
+                        files = files.filter(function (f) { return f !== name; });
+                        localStorage.setItem(LS_INDEX, JSON.stringify(files));
+                        localStorage.removeItem(LSC(name));
+                        if (active === name) switchTo(files[0]);
+                        else renderDrop();
+                    }
+
+                    function renameFile(oldName, newName) {
+                        newName = newName.trim().replace(/[^a-zA-Z0-9_\-. ]/g, "").slice(0, 32);
+                        if (!newName || newName === oldName || files.indexOf(newName) !== -1) return oldName;
+                        var code = localStorage.getItem(LSC(oldName)) || "";
+                        files = files.map(function (f) { return f === oldName ? newName : f; });
+                        localStorage.setItem(LS_INDEX, JSON.stringify(files));
+                        localStorage.setItem(LSC(newName), code);
+                        localStorage.removeItem(LSC(oldName));
+                        if (active === oldName) {
+                            active = newName;
+                            localStorage.setItem(LS_ACTIVE, active);
+                            document.getElementById("bfile-label").textContent = active;
+                        }
+                        return newName;
+                    }
+
+                    function renderDrop() {
+                        var drop = document.getElementById("fdrop");
+                        drop.innerHTML = "";
+                        files.forEach(function (fileName) {
+                            (function (name) {
+                                var row = document.createElement("div");
+                                row.className = "fdrop-file" + (name === active ? " active" : "");
+
+                                var ico = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                                ico.setAttribute("viewBox", "0 0 24 24");
+                                ico.setAttribute("fill", "none");
+                                ico.setAttribute("stroke", "currentColor");
+                                ico.setAttribute("stroke-width", "2");
+                                ico.setAttribute("stroke-linecap", "round");
+                                ico.setAttribute("stroke-linejoin", "round");
+                                ico.innerHTML = '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>';
+
+                                var lbl = document.createElement("span");
+                                lbl.className = "fdrop-name";
+                                lbl.textContent = name;
+
+                                /* fungsi aktifkan rename inline */
+                                function startRename() {
+                                    lbl.contentEditable = "true";
+                                    lbl.focus();
+                                    var rng = document.createRange();
+                                    rng.selectNodeContents(lbl);
+                                    window.getSelection().removeAllRanges();
+                                    window.getSelection().addRange(rng);
+                                }
+
+                                /* double-click nama → rename */
+                                lbl.addEventListener("dblclick", function (e) {
+                                    e.stopPropagation();
+                                    startRename();
+                                });
+                                lbl.addEventListener("keydown", function (e) {
+                                    if (e.key === "Enter") { e.preventDefault(); lbl.blur(); }
+                                    if (e.key === "Escape") { lbl.textContent = name; lbl.blur(); }
+                                });
+                                lbl.addEventListener("blur", function () {
+                                    lbl.contentEditable = "false";
+                                    renameFile(name, lbl.textContent);
+                                    renderDrop();
+                                });
+
+                                /* tombol rename (pensil) */
+                                var ren = document.createElement("span");
+                                ren.className = "fdrop-action fdrop-ren";
+                                ren.title = "Rename (atau klik 2x nama)";
+                                ren.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+                                ren.addEventListener("click", function (e) {
+                                    e.stopPropagation();
+                                    startRename();
+                                });
+
+                                /* tombol hapus (✕) */
+                                var del = document.createElement("span");
+                                del.className = "fdrop-action fdrop-del";
+                                del.title = files.length === 1 ? "Tidak bisa hapus file terakhir" : "Hapus file";
+                                del.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+                                del.addEventListener("click", function (e) {
+                                    e.stopPropagation();
+                                    if (files.length === 1) return;
+                                    /* konfirmasi inline — tidak pakai confirm() agar dropdown tidak tertutup */
+                                    if (del.dataset.confirm === "1") {
+                                        deleteFile(name);
+                                    } else {
+                                        del.dataset.confirm = "1";
+                                        del.title = "Klik lagi untuk konfirmasi hapus";
+                                        del.style.color = "var(--red)";
+                                        del.style.opacity = "1";
+                                        setTimeout(function () {
+                                            del.dataset.confirm = "";
+                                            del.title = "Hapus file";
+                                            del.style.color = "";
+                                            del.style.opacity = "";
+                                        }, 2000);
+                                    }
+                                });
+
+                                row.appendChild(ico);
+                                row.appendChild(lbl);
+                                row.appendChild(ren);
+                                row.appendChild(del);
+                                row.addEventListener("click", function () {
+                                    if (name !== active) switchTo(name);
+                                });
+                                drop.appendChild(row);
+                            })(fileName);
+                        });
+
+                        var sep = document.createElement("div");
+                        sep.className = "fdrop-sep";
+                        drop.appendChild(sep);
+
+                        var btnNew = document.createElement("div");
+                        btnNew.className = "fdrop-new";
+                        btnNew.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> File baru';
+                        btnNew.addEventListener("click", newFile);
+                        drop.appendChild(btnNew);
+                    }
+
+                    /* Load file aktif saat buka */
+                    var initCode = localStorage.getItem(LSC(active));
+                    if (initCode !== null) {
+                        cm.setValue(initCode);
+                    } else if (active === "file-1") {
+                        /* migrasi dari localStorage lama (jspg_code) */
+                        var legacy = localStorage.getItem("jspg_code");
+                        if (legacy) {
+                            cm.setValue(legacy);
+                            localStorage.setItem(LSC("file-1"), legacy);
+                        }
+                    }
+                    document.getElementById("bfile-label").textContent = active;
+                    renderDrop();
+
+                    /* auto-save per file */
+                    cm.on("change", function () {
+                        clearTimeout(window._fsSaveTimer);
+                        window._fsSaveTimer = setTimeout(saveActive, 500);
+                    });
                 })();
 
                 runCode();
