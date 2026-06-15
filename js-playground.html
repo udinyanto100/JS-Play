@@ -28,6 +28,9 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css"
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Source+Code+Pro:wght@400;500&family=Inconsolata:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
         <style>
             :root {
                 --b0: #0e1520;
@@ -36,35 +39,22 @@
                 --b2: #253050;
                 --b3: #334068;
                 --b4: #4d6080;
-                --f1: #8a9ab0; /* dinaikkan dari #656f7d — teks utama lebih jelas */
-                --f2: #b8d0e8; /* dinaikkan dari #9bbad8 */
-                --f3: #90aac8; /* dinaikkan dari #7090b0 */
-                --f4: #6080a0; /* dinaikkan dari #4d6880 */
-                /* ── Ocean: ungu-teal-rose susu, kontras cukup ── */
-                --red: #d09098; /* dusty rose, lebih terang */
-                --green: #72b89e; /* sage teal */
-                --yel: #a898d8; /* soft indigo */
-                --blu: #82b0cc; /* slate blue */
-                --pur: #a090c8; /* dusty violet */
-                --aqu: #72aab8; /* muted teal */
-                --ora: #c090a8; /* dusty mauve */
-                --gry: #607090;
-                --acc: var(--blu);
+                --f1: #8a9ab0;
+                --f2: #91beea;
+                --f3: #90aac8;
+                --f4: #31508b;
+                /* ── Default: warna kode syntax ── */
+                --pur: #7ad8cc;   /* Keyword */
+                --blu: #4faaff;   /* Variabel */
+                --green: #9292fa; /* String */
+                --ora: #b070c2;   /* Angka */
+                --yel: #d95cff;   /* Definisi / Operator */
+                --aqu: #d3a266;   /* Builtin / Meta */
+                --red: #9070b0;   /* Tag / Error */
+                --gry: #4f74b6;   /* Komentar */
+                --acc: #6b80d7;   /* Aksen UI */
+                --sel: #557fb2;   /* Warna Seleksi */
                 --rad: 6px;
-            }
-            /* ── Tema Ocean (default): ungu-teal-rose susu ── */
-
-            /* ── Tema Ember: rose-mauve-berry susu, hangat tanpa kuning/oranye ── */
-            body.theme-ember {
-                --red: #d89098; /* dusty crimson */
-                --green: #90b098; /* sage muted */
-                --yel: #c088b8; /* berry mauve */
-                --blu: #b090c8; /* dusty lavender */
-                --pur: #c880b0; /* dusty fuchsia */
-                --aqu: #80a0b0; /* slate teal */
-                --ora: #d890a0; /* rose */
-                --gry: #707080;
-                --acc: var(--pur);
             }
             * {
                 box-sizing: border-box;
@@ -476,11 +466,115 @@
                 border: 1px solid rgba(255, 255, 255, 0.08);
             }
 
-            /* ── Theme editor overlay ── */
+            /* ── Font picker ── */
+            #bfont-wrap {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+            #bfont-wrap::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                height: 8px;
+                background: transparent;
+            }
+            #fontdrop {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                min-width: 200px;
+                background: var(--b0s);
+                border: 1px solid var(--b2);
+                border-radius: var(--rad);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                z-index: 100;
+                padding: 4px;
+                flex-direction: column;
+                gap: 2px;
+            }
+            #bfont-wrap:hover #fontdrop,
+            #fontdrop:hover {
+                display: flex;
+            }
+            .font-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 7px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background 0.1s;
+                user-select: none;
+            }
+            .font-item:hover {
+                background: var(--b2);
+            }
+            .font-item.active {
+                background: var(--b2);
+                color: var(--acc);
+            }
+            .font-item-name {
+                font-size: 12.5px;
+                color: var(--f2);
+                flex: 1;
+            }
+            .font-item.active .font-item-name {
+                color: var(--acc);
+            }
+            .font-item-preview {
+                font-size: 11px;
+                color: var(--f4);
+                letter-spacing: 0.03em;
+            }
+            .font-sep {
+                height: 1px;
+                background: var(--b2);
+                margin: 3px 0;
+            }
+            .font-size-row {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 5px 10px 7px;
+            }
+            .font-size-label {
+                font-size: 11px;
+                color: var(--f4);
+                flex: 1;
+            }
+            .font-size-btn {
+                width: 22px;
+                height: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                border: 1px solid var(--b3);
+                background: var(--b1);
+                color: var(--f2);
+                font-family: inherit;
+                font-size: 14px;
+                cursor: pointer;
+                line-height: 1;
+                transition: background 0.1s;
+                flex-shrink: 0;
+            }
+            .font-size-btn:hover { background: var(--b2); }
+            .font-size-val {
+                font-size: 12px;
+                color: var(--f2);
+                min-width: 26px;
+                text-align: center;
+                font-variant-numeric: tabular-nums;
+            }
             #thed-overlay {
                 position: fixed;
                 inset: 0;
-                background: rgba(5, 8, 14, 0.6);
+                background: transparent;
                 z-index: 200;
                 display: flex;
                 align-items: center;
@@ -497,16 +591,20 @@
             #thed {
                 width: 100%;
                 max-width: 420px;
+                min-width: 260px;
+                min-height: 200px;
                 max-height: 86vh;
                 background: var(--b0s);
-                border: 1px solid var(--b2);
+                border: 1px solid var(--b3);
                 border-radius: 10px;
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
                 transform: translateY(14px) scale(0.98);
                 transition: transform 0.18s ease;
-                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+                resize: both;
+                position: absolute;
             }
             #thed-overlay.show #thed {
                 transform: translateY(0) scale(1);
@@ -660,6 +758,20 @@
                 flex: 1;
                 overflow-y: auto;
                 padding: 4px 6px 10px;
+            }
+            /* Resize handle indicator at bottom-right */
+            #thed::after {
+                content: "";
+                position: absolute;
+                right: 4px;
+                bottom: 4px;
+                width: 10px;
+                height: 10px;
+                border-right: 2px solid var(--b4);
+                border-bottom: 2px solid var(--b4);
+                border-radius: 0 0 3px 0;
+                pointer-events: none;
+                opacity: 0.5;
             }
             .thgroup-h {
                 font-size: 10.5px;
@@ -1466,6 +1578,16 @@
                         <line x1="10" y1="12" x2="14" y2="12" />
                     </svg>
                 </button>
+                <div id="bfont-wrap">
+                    <button class="btn" id="bfont" title="Font editor">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="4 7 4 4 20 4 20 7"/>
+                            <line x1="9" y1="20" x2="15" y2="20"/>
+                            <line x1="12" y1="4" x2="12" y2="20"/>
+                        </svg>
+                    </button>
+                    <div id="fontdrop"><!-- diisi JS --></div>
+                </div>
                 <button class="btn" id="bclr" title="Bersihkan console">
                     <svg
                         viewBox="0 0 24 24"
@@ -2009,7 +2131,7 @@
                 }
 
                 /* ── CodeMirror init ── */
-                var cm = CodeMirror(document.getElementById("ed"), {
+                var cm = window.cm = CodeMirror(document.getElementById("ed"), {
                     value: STARTER,
                     mode: "javascript",
                     theme: "gruvbox-dark",
@@ -3102,46 +3224,19 @@
                                 b3: "#334068",
                                 b4: "#4d6080",
                                 f1: "#8a9ab0",
-                                f2: "#b8d0e8",
+                                f2: "#91beea",
                                 f3: "#90aac8",
-                                f4: "#6080a0",
-                                red: "#d09098",
-                                green: "#72b89e",
-                                yel: "#a898d8",
-                                blu: "#82b0cc",
-                                pur: "#a090c8",
-                                aqu: "#72aab8",
-                                ora: "#c090a8",
-                                gry: "#607090",
-                                acc: "#82b0cc",
-                                sel: "#8870b8",
-                            },
-                        },
-                        ember: {
-                            id: "ember",
-                            name: "Ember",
-                            builtin: true,
-                            colors: {
-                                b0: "#0e1520",
-                                b0s: "#121c2e",
-                                b1: "#1a2540",
-                                b2: "#253050",
-                                b3: "#334068",
-                                b4: "#4d6080",
-                                f1: "#8a9ab0",
-                                f2: "#b8d0e8",
-                                f3: "#90aac8",
-                                f4: "#6080a0",
-                                red: "#d89098",
-                                green: "#90b098",
-                                yel: "#c088b8",
-                                blu: "#b090c8",
-                                pur: "#c880b0",
-                                aqu: "#80a0b0",
-                                ora: "#d890a0",
-                                gry: "#707080",
-                                acc: "#c880b0",
-                                sel: "#b068a0",
+                                f4: "#31508b",
+                                red: "#9070b0",
+                                green: "#9292fa",
+                                yel: "#d95cff",
+                                blu: "#4faaff",
+                                pur: "#7ad8cc",
+                                aqu: "#d3a266",
+                                ora: "#b070c2",
+                                gry: "#4f74b6",
+                                acc: "#6b80d7",
+                                sel: "#557fb2",
                             },
                         },
                     };
@@ -3207,18 +3302,17 @@
                     function getAllThemes() {
                         return [
                             BUILTIN_THEMES.ocean,
-                            BUILTIN_THEMES.ember,
                         ].concat(loadCustomThemes());
                     }
                     function getActiveThemeId() {
-                        return localStorage.getItem(LS_ACTIVE_THEME) || "ember";
+                        return localStorage.getItem(LS_ACTIVE_THEME) || "ocean";
                     }
                     function resolveTheme(id) {
                         var all = getAllThemes();
                         for (var i = 0; i < all.length; i++) {
                             if (all[i].id === id) return all[i];
                         }
-                        return BUILTIN_THEMES.ember;
+                        return BUILTIN_THEMES.ocean;
                     }
 
                     /* Terapkan tema ke seluruh UI + CodeMirror */
@@ -3227,9 +3321,7 @@
                             document.body.style.removeProperty("--" + k);
                         });
                         document.body.classList.remove("theme-ember");
-                        if (theme.id === "ember") {
-                            document.body.classList.add("theme-ember");
-                        } else if (theme.id !== "ocean") {
+                        if (theme.id !== "ocean") {
                             THEME_VAR_KEYS.forEach(function (k) {
                                 if (theme.colors[k])
                                     document.body.style.setProperty(
@@ -3455,7 +3547,6 @@
                         saveThemeArchive(arc);
                         if (getActiveThemeId() === id)
                             applyTheme(BUILTIN_THEMES.ocean);
-                        else renderThemeDrop();
                     }
 
                     function restoreTheme(id) {
@@ -3571,6 +3662,12 @@
                             : "Tema Baru " + (loadCustomThemes().length + 1);
                         renderThedBody();
                         applyEditorColorsLive();
+                        /* Reset posisi popup ke tengah setiap kali dibuka */
+                        var thed = document.getElementById("thed");
+                        thed.style.left = "";
+                        thed.style.top = "";
+                        thed.style.width = "";
+                        thed.style.height = "";
                         document
                             .getElementById("thed-overlay")
                             .classList.add("show");
@@ -3592,7 +3689,6 @@
                     }
 
                     function applyEditorColorsLive() {
-                        document.body.classList.remove("theme-ember");
                         THEME_VAR_KEYS.forEach(function (k) {
                             document.body.style.setProperty(
                                 "--" + k,
@@ -4130,6 +4226,70 @@
                             }
                         });
 
+                    /* ── Drag to move theme editor popup ── */
+                    (function () {
+                        var head = document.getElementById("thed-head");
+                        var thed = document.getElementById("thed");
+                        var overlay = document.getElementById("thed-overlay");
+                        var dragging = false;
+                        var startX, startY, origLeft, origTop;
+
+                        head.style.cursor = "move";
+                        head.style.userSelect = "none";
+
+                        function getPos() {
+                            var rect = thed.getBoundingClientRect();
+                            return { left: rect.left, top: rect.top };
+                        }
+
+                        function onDown(e) {
+                            /* skip clicks on buttons inside header */
+                            if (e.target !== head && e.target.closest && e.target.closest("button,input,[contenteditable]")) return;
+                            dragging = true;
+                            var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                            var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                            startX = clientX;
+                            startY = clientY;
+                            var pos = getPos();
+                            origLeft = pos.left;
+                            origTop = pos.top;
+                            /* Switch to absolute positioning */
+                            thed.style.position = "absolute";
+                            thed.style.left = origLeft + "px";
+                            thed.style.top = origTop + "px";
+                            thed.style.margin = "0";
+                            e.preventDefault();
+                        }
+
+                        function onMove(e) {
+                            if (!dragging) return;
+                            var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                            var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                            var dx = clientX - startX;
+                            var dy = clientY - startY;
+                            var newLeft = origLeft + dx;
+                            var newTop = origTop + dy;
+                            /* Clamp within viewport */
+                            var maxLeft = window.innerWidth - thed.offsetWidth;
+                            var maxTop = window.innerHeight - 60;
+                            newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+                            newTop = Math.max(0, Math.min(newTop, maxTop));
+                            thed.style.left = newLeft + "px";
+                            thed.style.top = newTop + "px";
+                        }
+
+                        function onUp() {
+                            dragging = false;
+                        }
+
+                        head.addEventListener("mousedown", onDown);
+                        head.addEventListener("touchstart", onDown, { passive: false });
+                        document.addEventListener("mousemove", onMove);
+                        document.addEventListener("touchmove", onMove, { passive: false });
+                        document.addEventListener("mouseup", onUp);
+                        document.addEventListener("touchend", onUp);
+                    })();
+
                     /* ── Tombol Copy kode warna ── */
                     var _toastTimer = null;
                     function showToast(msg) {
@@ -4247,6 +4407,133 @@
 
                     /* Muat tema aktif saat startup */
                     applyTheme(resolveTheme(getActiveThemeId()));
+
+                    /* ── Font Picker ── */
+                    (function () {
+                        var LS_FONT     = "jspg_font";
+                        var LS_FONTSIZE = "jspg_fontsize";
+
+                        var FONTS = [
+                            { id: "system",        name: "System Default",    stack: 'ui-monospace,"SF Mono","Fira Code","Cascadia Code",Consolas,monospace', preview: "Aa 01 {}" },
+                            { id: "firacode",      name: "Fira Code",         stack: '"Fira Code",monospace',       preview: "Aa 01 {}" },
+                            { id: "jetbrains",     name: "JetBrains Mono",    stack: '"JetBrains Mono",monospace',  preview: "Aa 01 {}" },
+                            { id: "sourcecodepro", name: "Source Code Pro",   stack: '"Source Code Pro",monospace', preview: "Aa 01 {}" },
+                            { id: "inconsolata",   name: "Inconsolata",       stack: '"Inconsolata",monospace',     preview: "Aa 01 {}" },
+                            { id: "ibmplexmono",   name: "IBM Plex Mono",     stack: '"IBM Plex Mono",monospace',   preview: "Aa 01 {}" },
+                            { id: "spacemono",     name: "Space Mono",        stack: '"Space Mono",monospace',      preview: "Aa 01 {}" },
+                            { id: "robotomono",    name: "Roboto Mono",       stack: '"Roboto Mono",monospace',     preview: "Aa 01 {}" },
+                        ];
+
+                        var MIN_SIZE = 10, MAX_SIZE = 22;
+
+                        function getActiveFontId()   { return localStorage.getItem(LS_FONT) || "system"; }
+                        function getActiveFontSize() { return parseInt(localStorage.getItem(LS_FONTSIZE) || "14", 10); }
+
+                        function applyFont(fontId, size) {
+                            var font = FONTS.find(function(f){ return f.id === fontId; }) || FONTS[0];
+                            size = size || getActiveFontSize();
+                            /* Body font */
+                            document.body.style.fontFamily = font.stack;
+                            /* CodeMirror font */
+                            var cmEl = document.querySelector(".CodeMirror");
+                            if (cmEl) {
+                                cmEl.style.fontFamily = font.stack;
+                                cmEl.style.fontSize   = size + "px";
+                            }
+                            /* Inject CSS var for CodeMirror size */
+                            var st = document.getElementById("font-style-inject");
+                            if (!st) {
+                                st = document.createElement("style");
+                                st.id = "font-style-inject";
+                                document.head.appendChild(st);
+                            }
+                            st.textContent =
+                                ".CodeMirror{font-family:" + font.stack + "!important;font-size:" + size + "px!important}" +
+                                "body{font-family:" + font.stack + "!important}";
+                            if (window.cm) window.cm.refresh();
+                            /* Also try dispatching a resize event for CodeMirror to reflow */
+                            window.dispatchEvent(new Event("resize"));
+                            localStorage.setItem(LS_FONT, fontId);
+                            localStorage.setItem(LS_FONTSIZE, size);
+                            renderFontDrop();
+                        }
+
+                        function renderFontDrop() {
+                            var drop    = document.getElementById("fontdrop");
+                            var activeId   = getActiveFontId();
+                            var activeSize = getActiveFontSize();
+                            drop.innerHTML = "";
+
+                            /* Font size row */
+                            var sizeRow = document.createElement("div");
+                            sizeRow.className = "font-size-row";
+                            var lbl = document.createElement("span");
+                            lbl.className = "font-size-label";
+                            lbl.textContent = "Ukuran";
+                            var btnM = document.createElement("button");
+                            btnM.className = "font-size-btn";
+                            btnM.textContent = "−";
+                            btnM.title = "Perkecil font";
+                            var valEl = document.createElement("span");
+                            valEl.className = "font-size-val";
+                            valEl.textContent = activeSize + "px";
+                            var btnP = document.createElement("button");
+                            btnP.className = "font-size-btn";
+                            btnP.textContent = "+";
+                            btnP.title = "Perbesar font";
+
+                            btnM.addEventListener("click", function(e){
+                                e.stopPropagation();
+                                var s = Math.max(MIN_SIZE, getActiveFontSize() - 1);
+                                applyFont(getActiveFontId(), s);
+                            });
+                            btnP.addEventListener("click", function(e){
+                                e.stopPropagation();
+                                var s = Math.min(MAX_SIZE, getActiveFontSize() + 1);
+                                applyFont(getActiveFontId(), s);
+                            });
+
+                            sizeRow.appendChild(lbl);
+                            sizeRow.appendChild(btnM);
+                            sizeRow.appendChild(valEl);
+                            sizeRow.appendChild(btnP);
+                            drop.appendChild(sizeRow);
+
+                            var sep = document.createElement("div");
+                            sep.className = "font-sep";
+                            drop.appendChild(sep);
+
+                            /* Font list */
+                            FONTS.forEach(function(font) {
+                                var row = document.createElement("div");
+                                row.className = "font-item" + (font.id === activeId ? " active" : "");
+
+                                var name = document.createElement("span");
+                                name.className = "font-item-name";
+                                name.textContent = font.name;
+
+                                var prev = document.createElement("span");
+                                prev.className = "font-item-preview";
+                                prev.style.fontFamily = font.stack;
+                                prev.textContent = font.preview;
+
+                                row.appendChild(name);
+                                row.appendChild(prev);
+                                row.addEventListener("click", function(){
+                                    applyFont(font.id, getActiveFontSize());
+                                });
+                                drop.appendChild(row);
+                            });
+                        }
+
+                        renderFontDrop();
+
+                        /* Apply saved font on startup */
+                        /* Use setTimeout to ensure CodeMirror is ready */
+                        setTimeout(function(){
+                            applyFont(getActiveFontId(), getActiveFontSize());
+                        }, 100);
+                    })();
                 })();
             })();
         </script>
