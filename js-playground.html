@@ -7,7 +7,11 @@
             content="width=device-width, initial-scale=1, maximum-scale=1"
         />
         <title>JS Playground</title>
-        <link rel="icon" type="image/png" href="https://img.icons8.com/nolan/64/forward.png" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="https://img.icons8.com/nolan/64/forward.png"
+        />
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"
@@ -32,19 +36,19 @@
                 --b2: #253050;
                 --b3: #334068;
                 --b4: #4d6080;
-                --f1: #8a9ab0;  /* dinaikkan dari #656f7d — teks utama lebih jelas */
-                --f2: #b8d0e8;  /* dinaikkan dari #9bbad8 */
-                --f3: #90aac8;  /* dinaikkan dari #7090b0 */
-                --f4: #6080a0;  /* dinaikkan dari #4d6880 */
+                --f1: #8a9ab0; /* dinaikkan dari #656f7d — teks utama lebih jelas */
+                --f2: #b8d0e8; /* dinaikkan dari #9bbad8 */
+                --f3: #90aac8; /* dinaikkan dari #7090b0 */
+                --f4: #6080a0; /* dinaikkan dari #4d6880 */
                 /* ── Ocean: ungu-teal-rose susu, kontras cukup ── */
-                --red:   #d09098;  /* dusty rose, lebih terang */
-                --green: #72b89e;  /* sage teal */
-                --yel:   #a898d8;  /* soft indigo */
-                --blu:   #82b0cc;  /* slate blue */
-                --pur:   #a090c8;  /* dusty violet */
-                --aqu:   #72aab8;  /* muted teal */
-                --ora:   #c090a8;  /* dusty mauve */
-                --gry:   #607090;
+                --red: #d09098; /* dusty rose, lebih terang */
+                --green: #72b89e; /* sage teal */
+                --yel: #a898d8; /* soft indigo */
+                --blu: #82b0cc; /* slate blue */
+                --pur: #a090c8; /* dusty violet */
+                --aqu: #72aab8; /* muted teal */
+                --ora: #c090a8; /* dusty mauve */
+                --gry: #607090;
                 --acc: var(--blu);
                 --rad: 6px;
             }
@@ -52,14 +56,14 @@
 
             /* ── Tema Ember: rose-mauve-berry susu, hangat tanpa kuning/oranye ── */
             body.theme-ember {
-                --red:   #d89098;  /* dusty crimson */
-                --green: #90b098;  /* sage muted */
-                --yel:   #c088b8;  /* berry mauve */
-                --blu:   #b090c8;  /* dusty lavender */
-                --pur:   #c880b0;  /* dusty fuchsia */
-                --aqu:   #80a0b0;  /* slate teal */
-                --ora:   #d890a0;  /* rose */
-                --gry:   #707080;
+                --red: #d89098; /* dusty crimson */
+                --green: #90b098; /* sage muted */
+                --yel: #c088b8; /* berry mauve */
+                --blu: #b090c8; /* dusty lavender */
+                --pur: #c880b0; /* dusty fuchsia */
+                --aqu: #80a0b0; /* slate teal */
+                --ora: #d890a0; /* rose */
+                --gry: #707080;
                 --acc: var(--pur);
             }
             * {
@@ -114,9 +118,13 @@
                 max-width: 120px;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                transition: background 0.12s, color 0.12s, border-color 0.12s;
+                transition:
+                    background 0.12s,
+                    color 0.12s,
+                    border-color 0.12s;
             }
-            #bfile:hover, #bfile-wrap:hover #bfile {
+            #bfile:hover,
+            #bfile-wrap:hover #bfile {
                 background: var(--b2);
                 color: var(--f1);
                 border-color: var(--b3);
@@ -130,13 +138,13 @@
             #fdrop {
                 display: none;
                 position: absolute;
-                top: 100%;          /* nempel langsung, tanpa gap */
+                top: 100%; /* nempel langsung, tanpa gap */
                 left: 0;
                 min-width: 180px;
                 background: var(--b0s);
                 border: 1px solid var(--b2);
                 border-radius: var(--rad);
-                box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
                 z-index: 100;
                 padding: 4px;
                 flex-direction: column;
@@ -150,7 +158,7 @@
                 top: 100%;
                 left: 0;
                 width: 100%;
-                height: 8px;        /* area jembatan */
+                height: 8px; /* area jembatan */
                 background: transparent;
             }
             #bfile-wrap:hover #fdrop,
@@ -166,7 +174,9 @@
                 cursor: pointer;
                 font-size: 12px;
                 color: var(--f2);
-                transition: background 0.1s, color 0.1s;
+                transition:
+                    background 0.1s,
+                    color 0.1s;
                 user-select: none;
             }
             .fdrop-file:hover {
@@ -203,7 +213,10 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                transition: opacity 0.1s, color 0.1s, background 0.1s;
+                transition:
+                    opacity 0.1s,
+                    color 0.1s,
+                    background 0.1s;
                 flex-shrink: 0;
                 cursor: pointer;
             }
@@ -242,7 +255,7 @@
                 }
             }
             .fdrop-action.pop svg {
-                animation: fdropPop 0.32s cubic-bezier(.34,1.56,.64,1);
+                animation: fdropPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
             }
             .fdrop-sep {
                 height: 1px;
@@ -272,7 +285,7 @@
             #arc-overlay {
                 position: fixed;
                 inset: 0;
-                background: rgba(5,8,14,0.55);
+                background: rgba(5, 8, 14, 0.55);
                 z-index: 150;
                 display: flex;
                 align-items: center;
@@ -282,7 +295,10 @@
                 transition: opacity 0.15s ease;
                 padding: 14px;
             }
-            #arc-overlay.show { opacity: 1; pointer-events: auto; }
+            #arc-overlay.show {
+                opacity: 1;
+                pointer-events: auto;
+            }
             #arc-panel {
                 width: 100%;
                 max-width: 360px;
@@ -293,11 +309,13 @@
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
-                box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
                 transform: translateY(12px) scale(0.98);
                 transition: transform 0.15s ease;
             }
-            #arc-overlay.show #arc-panel { transform: translateY(0) scale(1); }
+            #arc-overlay.show #arc-panel {
+                transform: translateY(0) scale(1);
+            }
             #arc-head {
                 display: flex;
                 align-items: center;
@@ -306,46 +324,110 @@
                 border-bottom: 1px solid var(--b1);
                 flex-shrink: 0;
             }
-            #arc-head svg { width: 14px; height: 14px; color: var(--f4); }
-            #arc-head-title { flex: 1; font-size: 13px; font-weight: 600; color: var(--f2); }
+            #arc-head svg {
+                width: 14px;
+                height: 14px;
+                color: var(--f4);
+            }
+            #arc-head-title {
+                flex: 1;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--f2);
+            }
             #arc-close {
-                width: 24px; height: 24px;
-                display: flex; align-items: center; justify-content: center;
-                border-radius: 4px; border: none; background: transparent;
-                color: var(--f3); cursor: pointer; font-family: inherit;
-                transition: background 0.1s, color 0.1s;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                border: none;
+                background: transparent;
+                color: var(--f3);
+                cursor: pointer;
+                font-family: inherit;
+                transition:
+                    background 0.1s,
+                    color 0.1s;
             }
-            #arc-close:hover { background: var(--b1); color: var(--f1); }
+            #arc-close:hover {
+                background: var(--b1);
+                color: var(--f1);
+            }
             #arc-list {
-                flex: 1; overflow-y: auto; padding: 6px;
-                display: flex; flex-direction: column; gap: 2px;
+                flex: 1;
+                overflow-y: auto;
+                padding: 6px;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
             }
-            .arc-empty { text-align: center; color: var(--f4); font-size: 12px; padding: 20px 0; }
+            .arc-empty {
+                text-align: center;
+                color: var(--f4);
+                font-size: 12px;
+                padding: 20px 0;
+            }
             .arc-item {
-                display: flex; align-items: center; gap: 8px;
-                padding: 6px 8px; border-radius: 5px; background: var(--b1);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 8px;
+                border-radius: 5px;
+                background: var(--b1);
             }
             .arc-item-name {
-                flex: 1; font-size: 12px; color: var(--f2);
-                overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+                flex: 1;
+                font-size: 12px;
+                color: var(--f2);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             .arc-restore {
-                display: flex; align-items: center; gap: 4px;
-                padding: 3px 8px; border-radius: 4px; border: 1px solid var(--b3);
-                background: transparent; color: var(--green);
-                font-family: inherit; font-size: 11px; cursor: pointer;
-                transition: background 0.1s; white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                padding: 3px 8px;
+                border-radius: 4px;
+                border: 1px solid var(--b3);
+                background: transparent;
+                color: var(--green);
+                font-family: inherit;
+                font-size: 11px;
+                cursor: pointer;
+                transition: background 0.1s;
+                white-space: nowrap;
             }
-            .arc-restore:hover { background: var(--b2); }
-            .arc-restore svg { width: 10px; height: 10px; }
+            .arc-restore:hover {
+                background: var(--b2);
+            }
+            .arc-restore svg {
+                width: 10px;
+                height: 10px;
+            }
             .arc-perm {
-                display: flex; align-items: center; justify-content: center;
-                width: 22px; height: 22px; border-radius: 4px; border: none;
-                background: transparent; color: var(--red); cursor: pointer;
-                transition: background 0.1s; flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 22px;
+                height: 22px;
+                border-radius: 4px;
+                border: none;
+                background: transparent;
+                color: var(--red);
+                cursor: pointer;
+                transition: background 0.1s;
+                flex-shrink: 0;
             }
-            .arc-perm:hover { background: rgba(208,144,152,0.15); }
-            .arc-perm svg { width: 11px; height: 11px; }
+            .arc-perm:hover {
+                background: rgba(208, 144, 152, 0.15);
+            }
+            .arc-perm svg {
+                width: 11px;
+                height: 11px;
+            }
 
             /* ── Theme switcher dropdown (reuses .fdrop-* styles) ── */
             #bthm-wrap {
@@ -441,11 +523,85 @@
                 background: transparent;
                 color: var(--f3);
                 cursor: pointer;
+                transition:
+                    background 0.1s,
+                    color 0.1s,
+                    border-color 0.1s;
+            }
+            #thed-copy:hover {
+                background: var(--b1);
+                color: var(--f1);
+                border-color: var(--b3);
+            }
+            #thed-copy.copied {
+                color: var(--green);
+                border-color: var(--green);
+                background: rgba(114, 184, 158, 0.12);
+            }
+            #thed-copy svg { pointer-events: none; }
+            #thed-paste {
+                width: 26px; height: 26px; flex-shrink: 0;
+                display: flex; align-items: center; justify-content: center;
+                border-radius: 5px; border: 1px solid var(--b2);
+                background: transparent; color: var(--f3); cursor: pointer;
                 transition: background 0.1s, color 0.1s, border-color 0.1s;
             }
-            #thed-copy:hover { background: var(--b1); color: var(--f1); border-color: var(--b3); }
-            #thed-copy.copied { color: var(--green); border-color: var(--green); background: rgba(114,184,158,0.12); }
-            #thed-copy svg { pointer-events: none; }
+            #thed-paste:hover { background: var(--b1); color: var(--f1); border-color: var(--b3); }
+            #thed-paste.pasted { color: var(--aqu); border-color: var(--aqu); background: rgba(114,170,184,0.12); }
+            #thed-paste.error  { color: var(--red);  border-color: var(--red);  background: rgba(208,144,152,0.12); }
+            #thed-paste.active { color: var(--aqu); border-color: var(--aqu); background: rgba(114,170,184,0.12); }
+            #thed-paste svg { pointer-events: none; }
+
+            /* ── Panel Paste Massal ── */
+            #thed-paste-panel {
+                display: none;
+                flex-direction: column;
+                gap: 6px;
+                padding: 8px 12px 10px;
+                border-bottom: 1px solid var(--b1);
+                background: var(--b0s);
+                flex-shrink: 0;
+            }
+            #thed-paste-panel.show { display: flex; }
+            #thed-paste-ta {
+                width: 100%;
+                min-height: 88px;
+                max-height: 180px;
+                background: var(--b1);
+                border: 1px solid var(--b3);
+                border-radius: 5px;
+                color: var(--f2);
+                font-family: inherit;
+                font-size: 11.5px;
+                line-height: 1.55;
+                padding: 7px 10px;
+                resize: vertical;
+                outline: none;
+                transition: border-color 0.12s;
+            }
+            #thed-paste-ta:focus { border-color: var(--acc); }
+            #thed-paste-ta::placeholder { color: var(--f4); opacity: 0.8; }
+            #thed-paste-info {
+                font-size: 10.5px;
+                color: var(--f4);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            #thed-paste-info.has-colors { color: var(--aqu); }
+            #thed-paste-preview {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 3px;
+                margin-top: 2px;
+            }
+            .tpprev-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 3px;
+                border: 1px solid rgba(255,255,255,0.08);
+                flex-shrink: 0;
+            }
 
             /* Toast notifikasi copy */
             #copy-toast {
@@ -459,10 +615,12 @@
                 font-size: 12px;
                 padding: 7px 14px;
                 border-radius: 20px;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
                 opacity: 0;
                 pointer-events: none;
-                transition: opacity 0.15s ease, transform 0.15s ease;
+                transition:
+                    opacity 0.15s ease,
+                    transform 0.15s ease;
                 z-index: 300;
                 white-space: nowrap;
             }
@@ -597,7 +755,9 @@
                 height: 12px;
                 border-radius: 50%;
                 border: 2px solid #fff;
-                box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.5);
+                box-shadow:
+                    0 0 0 1px rgba(0, 0, 0, 0.5),
+                    0 1px 3px rgba(0, 0, 0, 0.5);
                 transform: translate(-50%, -50%);
                 pointer-events: none;
             }
@@ -605,8 +765,16 @@
                 position: relative;
                 height: 14px;
                 border-radius: 7px;
-                background: linear-gradient(to right,
-                    #f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);
+                background: linear-gradient(
+                    to right,
+                    #f00,
+                    #ff0,
+                    #0f0,
+                    #0ff,
+                    #00f,
+                    #f0f,
+                    #f00
+                );
                 cursor: pointer;
                 overflow: visible;
             }
@@ -618,7 +786,9 @@
                 border-radius: 50%;
                 background: #fff;
                 border: 2px solid #fff;
-                box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.5);
+                box-shadow:
+                    0 0 0 1px rgba(0, 0, 0, 0.4),
+                    0 1px 3px rgba(0, 0, 0, 0.5);
                 transform: translate(-50%, -50%);
                 pointer-events: none;
             }
@@ -632,7 +802,7 @@
                 height: 22px;
                 border-radius: 5px;
                 flex-shrink: 0;
-                border: 1px solid rgba(255,255,255,0.12);
+                border: 1px solid rgba(255, 255, 255, 0.12);
             }
             .cpk-hex-input {
                 flex: 1;
@@ -715,7 +885,9 @@
                 background: transparent;
                 color: var(--f3);
                 cursor: pointer;
-                transition: background 0.12s, color 0.12s;
+                transition:
+                    background 0.12s,
+                    color 0.12s;
             }
             #thed-cancel:hover {
                 background: var(--b1);
@@ -980,21 +1152,7 @@
             .cm-s-gruvbox-light .CodeMirror-cursor {
                 border-left: 2px solid var(--f1);
             }
-            .cm-s-gruvbox-dark .CodeMirror-selected,
-            .cm-s-gruvbox-light .CodeMirror-selected {
-                background: rgba(136, 112, 184, 0.28);  /* ungu muted Ocean */
-            }
-            .cm-s-gruvbox-dark .CodeMirror-activeline-background,
-            .cm-s-gruvbox-light .CodeMirror-activeline-background {
-                background: rgba(106, 154, 191, 0.09);  /* biru slate halus */
-            }
-            /* Selection Ember: rose-mauve */
-            body.theme-ember .cm-s-gruvbox-dark .CodeMirror-selected {
-                background: rgba(176, 104, 160, 0.28);  /* fuchsia mauve muted */
-            }
-            body.theme-ember .cm-s-gruvbox-dark .CodeMirror-activeline-background {
-                background: rgba(192, 120, 136, 0.09);  /* rose halus */
-            }
+            /* Warna seleksi & active-line dikelola dinamis oleh applyTheme() via #dyn-sel */
             .cm-s-gruvbox-dark .CodeMirror-matchingbracket,
             .cm-s-gruvbox-light .CodeMirror-matchingbracket {
                 color: var(--green) !important;
@@ -1223,17 +1381,36 @@
             <div id="tb">
                 <!-- KIRI: file | no baris | word wrap | rapikan | hapus -->
                 <div id="bfile-wrap">
-                    <button id="bfile" title="File aktif — hover untuk daftar file">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-                            <polyline points="13 2 13 9 20 9"/>
+                    <button
+                        id="bfile"
+                        title="File aktif — hover untuk daftar file"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"
+                            />
+                            <polyline points="13 2 13 9 20 9" />
                         </svg>
                         <span id="bfile-label">file-1</span>
                     </button>
                     <div id="fdrop"><!-- diisi JS --></div>
                 </div>
                 <button class="btn on" id="bln" title="Nomor baris">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <line x1="5" y1="9" x2="19" y2="9" />
                         <line x1="5" y1="15" x2="19" y2="15" />
                         <line x1="9" y1="4" x2="7" y2="20" />
@@ -1241,7 +1418,14 @@
                     </svg>
                 </button>
                 <button class="btn" id="bww" title="Word Wrap">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <path d="M3 6h18" />
                         <path d="M3 12h13a2 2 0 0 1 0 4h-3" />
                         <polyline points="11 14 9 16 11 18" />
@@ -1249,23 +1433,52 @@
                     </svg>
                 </button>
                 <button class="btn" id="bfmt" title="Rapikan kode">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 3v4M3 5h4M13 3l1.6 4.7L19 9l-4.4 1.6L13 15l-1.6-4.4L7 9l4.4-1.6z" />
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M5 3v4M3 5h4M13 3l1.6 4.7L19 9l-4.4 1.6L13 15l-1.6-4.4L7 9l4.4-1.6z"
+                        />
                         <path d="M6 17v4M4 19h4" />
                     </svg>
                 </button>
                 <div class="sep"></div>
-                <button class="btn" id="barc" title="Arsip file (file yang dihapus)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="21 8 21 21 3 21 3 8"/>
-                        <rect x="1" y="3" width="22" height="5"/>
-                        <line x1="10" y1="12" x2="14" y2="12"/>
+                <button
+                    class="btn"
+                    id="barc"
+                    title="Arsip file (file yang dihapus)"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline points="21 8 21 21 3 21 3 8" />
+                        <rect x="1" y="3" width="22" height="5" />
+                        <line x1="10" y1="12" x2="14" y2="12" />
                     </svg>
                 </button>
                 <button class="btn" id="bclr" title="Bersihkan console">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <polyline points="3 6 5 6 21 6" />
-                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" />
+                        <path
+                            d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"
+                        />
                         <line x1="10" y1="11" x2="10" y2="17" />
                         <line x1="14" y1="11" x2="14" y2="17" />
                     </svg>
@@ -1276,32 +1489,68 @@
 
                 <!-- KANAN: manual run | auto run | kunci scroll | mode color -->
                 <button class="btn run" id="brun" title="Run (Ctrl+Enter)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <path d="M6 4l13 8-13 8z" />
                     </svg>
                 </button>
                 <button class="btn on" id="baut" title="Auto run">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" />
                         <path d="M21 3v5h-5" />
                     </svg>
                 </button>
                 <button class="btn" id="brig" title="Kunci Scroll Log">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="17" x2="12" y2="22"/>
-                        <path d="M5 17h14v-2a7 7 0 0 0-7-7 7 7 0 0 0-7 7v2z"/>
-                        <line x1="12" y1="3" x2="12" y2="8"/>
-                        <circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <line x1="12" y1="17" x2="12" y2="22" />
+                        <path d="M5 17h14v-2a7 7 0 0 0-7-7 7 7 0 0 0-7 7v2z" />
+                        <line x1="12" y1="3" x2="12" y2="8" />
+                        <circle
+                            cx="12"
+                            cy="3"
+                            r="1"
+                            fill="currentColor"
+                            stroke="none"
+                        />
                     </svg>
                 </button>
                 <div id="bthm-wrap">
                     <button class="btn on" id="bthm" title="Tema warna kode">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="13.5" cy="6.5" r="2.5"/>
-                            <circle cx="17.5" cy="10.5" r="2.5"/>
-                            <circle cx="8.5" cy="7.5" r="2.5"/>
-                            <circle cx="6.5" cy="12.5" r="2.5"/>
-                            <path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="13.5" cy="6.5" r="2.5" />
+                            <circle cx="17.5" cy="10.5" r="2.5" />
+                            <circle cx="8.5" cy="7.5" r="2.5" />
+                            <circle cx="6.5" cy="12.5" r="2.5" />
+                            <path
+                                d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+                            />
                         </svg>
                     </button>
                     <div id="thdrop"><!-- diisi JS --></div>
@@ -1337,7 +1586,9 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                             >
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                <polygon
+                                    points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"
+                                />
                             </svg>
                             <span id="fd">0.0 ms</span>
                         </div>
@@ -1349,14 +1600,33 @@
         <div id="arc-overlay">
             <div id="arc-panel">
                 <div id="arc-head">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="21 8 21 21 3 21 3 8"/>
-                        <rect x="1" y="3" width="22" height="5"/>
-                        <line x1="10" y1="12" x2="14" y2="12"/>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline points="21 8 21 21 3 21 3 8" />
+                        <rect x="1" y="3" width="22" height="5" />
+                        <line x1="10" y1="12" x2="14" y2="12" />
                     </svg>
                     <span id="arc-head-title">Arsip</span>
                     <button id="arc-close">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            width="12"
+                            height="12"
+                        >
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
                     </button>
                 </div>
                 <div id="arc-list"><!-- diisi JS --></div>
@@ -1366,32 +1636,98 @@
         <div id="thed-overlay">
             <div id="thed">
                 <div id="thed-head">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="13.5" cy="6.5" r="2.5"/>
-                        <circle cx="17.5" cy="10.5" r="2.5"/>
-                        <circle cx="8.5" cy="7.5" r="2.5"/>
-                        <circle cx="6.5" cy="12.5" r="2.5"/>
-                        <path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <circle cx="13.5" cy="6.5" r="2.5" />
+                        <circle cx="17.5" cy="10.5" r="2.5" />
+                        <circle cx="8.5" cy="7.5" r="2.5" />
+                        <circle cx="6.5" cy="12.5" r="2.5" />
+                        <path
+                            d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+                        />
                     </svg>
-                    <span id="thed-name" contenteditable="true" spellcheck="false">Tema Baru</span>
-                    <button id="thed-copy" title="Salin semua kode warna">
+                    <span
+                        id="thed-name"
+                        contenteditable="true"
+                        spellcheck="false"
+                        >Tema Baru</span
+                    >
+                    <button id="thed-paste" title="Tempel kode warna">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                            <line x1="12" y1="11" x2="12" y2="17"/>
+                            <line x1="9" y1="14" x2="15" y2="14"/>
+                        </svg>
+                    </button>
+                    <button id="thed-copy" title="Salin semua kode warna">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            width="13"
+                            height="13"
+                        >
+                            <rect
+                                x="9"
+                                y="9"
+                                width="13"
+                                height="13"
+                                rx="2"
+                                ry="2"
+                            />
+                            <path
+                                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                            />
                         </svg>
                     </button>
                 </div>
+                <div id="thed-paste-panel">
+                    <textarea
+                        id="thed-paste-ta"
+                        spellcheck="false"
+                        placeholder="Paste kode warna di sini — HEX, RGB, atau RGBA, format apa saja.&#10;&#10;Contoh yang dikenali:&#10;  #d09098  · #82b0cc  · #607090&#10;  rgb(130, 176, 204)&#10;  rgba(160, 144, 200, 1)&#10;&#10;Warna ke-1 → slot pertama editor (Latar utama)&#10;Warna ke-2 → slot kedua (Latar panel), dan seterusnya.&#10;Teks lain di luar kode warna diabaikan."
+                    ></textarea>
+                    <div id="thed-paste-info">Menunggu paste…</div>
+                    <div id="thed-paste-preview"></div>
+                </div>
                 <div id="thed-body"><!-- diisi JS --></div>
                 <div id="thed-foot">
-                    <button id="thed-cancel" title="Batal, kembali ke tema sebelumnya">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
+                    <button
+                        id="thed-cancel"
+                        title="Batal, kembali ke tema sebelumnya"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
                     </button>
                     <button id="thed-save">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"/>
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <polyline points="20 6 9 17 4 12" />
                         </svg>
                         Simpan Konfigurasi
                     </button>
@@ -2117,7 +2453,10 @@
                                 top: cl.scrollTop + (rowTop - consoleTop),
                                 behavior: "smooth",
                             });
-                        } else if (state.rigid && row.classList.contains("exp")) {
+                        } else if (
+                            state.rigid &&
+                            row.classList.contains("exp")
+                        ) {
                             row.scrollIntoView({
                                 behavior: "smooth",
                                 block: "nearest",
@@ -2206,20 +2545,35 @@
                         g = 0,
                         b = 0;
                     if (h < 60) {
-                        r = c; g = x; b = 0;
+                        r = c;
+                        g = x;
+                        b = 0;
                     } else if (h < 120) {
-                        r = x; g = c; b = 0;
+                        r = x;
+                        g = c;
+                        b = 0;
                     } else if (h < 180) {
-                        r = 0; g = c; b = x;
+                        r = 0;
+                        g = c;
+                        b = x;
                     } else if (h < 240) {
-                        r = 0; g = x; b = c;
+                        r = 0;
+                        g = x;
+                        b = c;
                     } else if (h < 300) {
-                        r = x; g = 0; b = c;
+                        r = x;
+                        g = 0;
+                        b = c;
                     } else {
-                        r = c; g = 0; b = x;
+                        r = c;
+                        g = 0;
+                        b = x;
                     }
                     function toHex(v) {
-                        var n = Math.max(0, Math.min(255, Math.round((v + m) * 255)));
+                        var n = Math.max(
+                            0,
+                            Math.min(255, Math.round((v + m) * 255)),
+                        );
                         return n.toString(16).padStart(2, "0");
                     }
                     return "#" + toHex(r) + toHex(g) + toHex(b);
@@ -2321,7 +2675,6 @@
                         this.classList.toggle("on", state.rigid);
                     });
 
-
                 /* ── Resizable divider ── */
                 (function () {
                     var pn = document.getElementById("panels"),
@@ -2357,13 +2710,17 @@
 
                 /* ── File Manager ── */
                 (function () {
-                    var LS_INDEX   = "jspg_files";
-                    var LS_ACTIVE  = "jspg_active";
+                    var LS_INDEX = "jspg_files";
+                    var LS_ACTIVE = "jspg_active";
                     var LS_ARCHIVE = "jspg_archive";
-                    var LSC = function (n) { return "jspg_code:" + n; };
+                    var LSC = function (n) {
+                        return "jspg_code:" + n;
+                    };
 
                     /* Init */
-                    var files = JSON.parse(localStorage.getItem(LS_INDEX) || "null");
+                    var files = JSON.parse(
+                        localStorage.getItem(LS_INDEX) || "null",
+                    );
                     if (!files || !files.length) {
                         files = ["file-1"];
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
@@ -2373,7 +2730,13 @@
 
                     /* Arsip: [{name, code}] */
                     function loadArchive() {
-                        try { return JSON.parse(localStorage.getItem(LS_ARCHIVE) || "[]"); } catch(e) { return []; }
+                        try {
+                            return JSON.parse(
+                                localStorage.getItem(LS_ARCHIVE) || "[]",
+                            );
+                        } catch (e) {
+                            return [];
+                        }
                     }
                     function saveArchive(arr) {
                         localStorage.setItem(LS_ARCHIVE, JSON.stringify(arr));
@@ -2390,7 +2753,8 @@
                         localStorage.setItem(LS_ACTIVE, active);
                         var code = localStorage.getItem(LSC(active));
                         cm.setValue(code !== null ? code : "");
-                        document.getElementById("bfile-label").textContent = active;
+                        document.getElementById("bfile-label").textContent =
+                            active;
                         renderDrop();
                         cm.focus();
                     }
@@ -2408,19 +2772,26 @@
 
                     /* Hapus → arsip, bukan hapus beneran */
                     function archiveFile(name) {
-                        if (files.length === 1) return; /* jangan arsip file terakhir */
+                        if (files.length === 1)
+                            return; /* jangan arsip file terakhir */
                         saveActive();
                         var code = localStorage.getItem(LSC(name)) || "";
                         var arc = loadArchive();
                         /* hindari duplikat nama di arsip */
                         var arcName = name;
                         var cnt = 1;
-                        while (arc.some(function(a){ return a.name === arcName; })) {
-                            arcName = name + "-" + (++cnt);
+                        while (
+                            arc.some(function (a) {
+                                return a.name === arcName;
+                            })
+                        ) {
+                            arcName = name + "-" + ++cnt;
                         }
                         arc.push({ name: arcName, code: code });
                         saveArchive(arc);
-                        files = files.filter(function (f) { return f !== name; });
+                        files = files.filter(function (f) {
+                            return f !== name;
+                        });
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
                         localStorage.removeItem(LSC(name));
                         if (active === name) switchTo(files[0]);
@@ -2431,12 +2802,19 @@
                     function restoreFile(arcName) {
                         var arc = loadArchive();
                         var item = null;
-                        arc = arc.filter(function(a) { if(a.name===arcName){item=a;return false;} return true; });
+                        arc = arc.filter(function (a) {
+                            if (a.name === arcName) {
+                                item = a;
+                                return false;
+                            }
+                            return true;
+                        });
                         if (!item) return;
                         saveArchive(arc);
                         var finalName = arcName;
                         var cnt2 = 1;
-                        while (files.indexOf(finalName) !== -1) finalName = arcName + "-" + (++cnt2);
+                        while (files.indexOf(finalName) !== -1)
+                            finalName = arcName + "-" + ++cnt2;
                         files.push(finalName);
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
                         localStorage.setItem(LSC(finalName), item.code);
@@ -2446,23 +2824,36 @@
 
                     /* Hapus permanen dari arsip */
                     function permDeleteFile(arcName) {
-                        var arc = loadArchive().filter(function(a){ return a.name !== arcName; });
+                        var arc = loadArchive().filter(function (a) {
+                            return a.name !== arcName;
+                        });
                         saveArchive(arc);
                         renderArchivePanel();
                     }
 
                     function renameFile(oldName, newName) {
-                        newName = newName.trim().replace(/[^a-zA-Z0-9_\-. ]/g, "").slice(0, 32);
-                        if (!newName || newName === oldName || files.indexOf(newName) !== -1) return oldName;
+                        newName = newName
+                            .trim()
+                            .replace(/[^a-zA-Z0-9_\-. ]/g, "")
+                            .slice(0, 32);
+                        if (
+                            !newName ||
+                            newName === oldName ||
+                            files.indexOf(newName) !== -1
+                        )
+                            return oldName;
                         var code = localStorage.getItem(LSC(oldName)) || "";
-                        files = files.map(function (f) { return f === oldName ? newName : f; });
+                        files = files.map(function (f) {
+                            return f === oldName ? newName : f;
+                        });
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
                         localStorage.setItem(LSC(newName), code);
                         localStorage.removeItem(LSC(oldName));
                         if (active === oldName) {
                             active = newName;
                             localStorage.setItem(LS_ACTIVE, active);
-                            document.getElementById("bfile-label").textContent = active;
+                            document.getElementById("bfile-label").textContent =
+                                active;
                         }
                         return newName;
                     }
@@ -2473,16 +2864,22 @@
                         files.forEach(function (fileName) {
                             (function (name) {
                                 var row = document.createElement("div");
-                                row.className = "fdrop-file" + (name === active ? " active" : "");
+                                row.className =
+                                    "fdrop-file" +
+                                    (name === active ? " active" : "");
 
-                                var ico = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                                var ico = document.createElementNS(
+                                    "http://www.w3.org/2000/svg",
+                                    "svg",
+                                );
                                 ico.setAttribute("viewBox", "0 0 24 24");
                                 ico.setAttribute("fill", "none");
                                 ico.setAttribute("stroke", "currentColor");
                                 ico.setAttribute("stroke-width", "2");
                                 ico.setAttribute("stroke-linecap", "round");
                                 ico.setAttribute("stroke-linejoin", "round");
-                                ico.innerHTML = '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>';
+                                ico.innerHTML =
+                                    '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>';
 
                                 var lbl = document.createElement("span");
                                 lbl.className = "fdrop-name";
@@ -2502,8 +2899,14 @@
                                     startRename();
                                 });
                                 lbl.addEventListener("keydown", function (e) {
-                                    if (e.key === "Enter") { e.preventDefault(); lbl.blur(); }
-                                    if (e.key === "Escape") { lbl.textContent = name; lbl.blur(); }
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        lbl.blur();
+                                    }
+                                    if (e.key === "Escape") {
+                                        lbl.textContent = name;
+                                        lbl.blur();
+                                    }
                                 });
                                 lbl.addEventListener("blur", function () {
                                     lbl.contentEditable = "false";
@@ -2514,7 +2917,8 @@
                                 var ren = document.createElement("span");
                                 ren.className = "fdrop-action fdrop-ren";
                                 ren.title = "Rename";
-                                ren.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+                                ren.innerHTML =
+                                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
                                 ren.addEventListener("click", function (e) {
                                     e.stopPropagation();
                                     startRename();
@@ -2524,10 +2928,13 @@
                                 var del = document.createElement("span");
                                 del.className = "fdrop-action fdrop-del";
                                 wireArchiveBtn(del, {
-                                    title: files.length === 1 ? "Tidak bisa hapus file terakhir" : "Pindah ke arsip",
+                                    title:
+                                        files.length === 1
+                                            ? "Tidak bisa hapus file terakhir"
+                                            : "Pindah ke arsip",
                                     onArchive: function () {
                                         if (files.length > 1) archiveFile(name);
-                                    }
+                                    },
                                 });
 
                                 row.appendChild(ico);
@@ -2547,7 +2954,8 @@
 
                         var btnNew = document.createElement("div");
                         btnNew.className = "fdrop-new";
-                        btnNew.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> File baru';
+                        btnNew.innerHTML =
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> File baru';
                         btnNew.addEventListener("click", newFile);
                         drop.appendChild(btnNew);
                     }
@@ -2566,7 +2974,7 @@
                             list.appendChild(emp);
                             return;
                         }
-                        arc.forEach(function(item) {
+                        arc.forEach(function (item) {
                             var row = document.createElement("div");
                             row.className = "arc-item";
 
@@ -2576,14 +2984,19 @@
 
                             var rest = document.createElement("button");
                             rest.className = "arc-restore";
-                            rest.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.27"/></svg> Kembalikan';
-                            rest.addEventListener("click", function() { restoreFile(item.name); });
+                            rest.innerHTML =
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.27"/></svg> Kembalikan';
+                            rest.addEventListener("click", function () {
+                                restoreFile(item.name);
+                            });
 
                             var perm = document.createElement("button");
                             perm.className = "arc-perm";
                             perm.title = "Hapus permanen";
                             perm.innerHTML = ICON_X;
-                            perm.addEventListener("click", function() { permDeleteFile(item.name); });
+                            perm.addEventListener("click", function () {
+                                permDeleteFile(item.name);
+                            });
 
                             row.appendChild(nm);
                             row.appendChild(rest);
@@ -2594,17 +3007,27 @@
 
                     function openArchive() {
                         renderArchivePanel();
-                        document.getElementById("arc-overlay").classList.add("show");
+                        document
+                            .getElementById("arc-overlay")
+                            .classList.add("show");
                     }
                     function closeArchive() {
-                        document.getElementById("arc-overlay").classList.remove("show");
+                        document
+                            .getElementById("arc-overlay")
+                            .classList.remove("show");
                     }
 
-                    document.getElementById("barc").addEventListener("click", openArchive);
-                    document.getElementById("arc-close").addEventListener("click", closeArchive);
-                    document.getElementById("arc-overlay").addEventListener("click", function(e) {
-                        if (e.target === this) closeArchive();
-                    });
+                    document
+                        .getElementById("barc")
+                        .addEventListener("click", openArchive);
+                    document
+                        .getElementById("arc-close")
+                        .addEventListener("click", closeArchive);
+                    document
+                        .getElementById("arc-overlay")
+                        .addEventListener("click", function (e) {
+                            if (e.target === this) closeArchive();
+                        });
 
                     /* Load file aktif saat buka */
                     var initCode = localStorage.getItem(LSC(active));
@@ -2633,14 +3056,37 @@
 
                     /* Variabel CSS yang membentuk satu tema */
                     var THEME_VAR_KEYS = [
-                        "b0", "b0s", "b1", "b2", "b3", "b4",
-                        "f1", "f2", "f3", "f4",
-                        "red", "green", "yel", "blu", "pur", "aqu", "ora", "gry",
+                        "b0",
+                        "b0s",
+                        "b1",
+                        "b2",
+                        "b3",
+                        "b4",
+                        "f1",
+                        "f2",
+                        "f3",
+                        "f4",
+                        "red",
+                        "green",
+                        "yel",
+                        "blu",
+                        "pur",
+                        "aqu",
+                        "ora",
+                        "gry",
                         "acc",
+                        "sel",
                     ];
 
                     /* Dipakai untuk preview titik warna di daftar tema */
-                    var SWATCH_KEYS = ["b1", "pur", "blu", "green", "ora", "red"];
+                    var SWATCH_KEYS = [
+                        "b1",
+                        "pur",
+                        "blu",
+                        "green",
+                        "ora",
+                        "red",
+                    ];
 
                     /* Tema bawaan — nilai diambil dari :root & body.theme-ember */
                     var BUILTIN_THEMES = {
@@ -2649,11 +3095,26 @@
                             name: "Ocean",
                             builtin: true,
                             colors: {
-                                b0: "#0e1520", b0s: "#121c2e", b1: "#1a2540", b2: "#253050", b3: "#334068", b4: "#4d6080",
-                                f1: "#8a9ab0", f2: "#b8d0e8", f3: "#90aac8", f4: "#6080a0",
-                                red: "#d09098", green: "#72b89e", yel: "#a898d8", blu: "#82b0cc",
-                                pur: "#a090c8", aqu: "#72aab8", ora: "#c090a8", gry: "#607090",
+                                b0: "#0e1520",
+                                b0s: "#121c2e",
+                                b1: "#1a2540",
+                                b2: "#253050",
+                                b3: "#334068",
+                                b4: "#4d6080",
+                                f1: "#8a9ab0",
+                                f2: "#b8d0e8",
+                                f3: "#90aac8",
+                                f4: "#6080a0",
+                                red: "#d09098",
+                                green: "#72b89e",
+                                yel: "#a898d8",
+                                blu: "#82b0cc",
+                                pur: "#a090c8",
+                                aqu: "#72aab8",
+                                ora: "#c090a8",
+                                gry: "#607090",
                                 acc: "#82b0cc",
+                                sel: "#8870b8",
                             },
                         },
                         ember: {
@@ -2661,11 +3122,26 @@
                             name: "Ember",
                             builtin: true,
                             colors: {
-                                b0: "#0e1520", b0s: "#121c2e", b1: "#1a2540", b2: "#253050", b3: "#334068", b4: "#4d6080",
-                                f1: "#8a9ab0", f2: "#b8d0e8", f3: "#90aac8", f4: "#6080a0",
-                                red: "#d89098", green: "#90b098", yel: "#c088b8", blu: "#b090c8",
-                                pur: "#c880b0", aqu: "#80a0b0", ora: "#d890a0", gry: "#707080",
+                                b0: "#0e1520",
+                                b0s: "#121c2e",
+                                b1: "#1a2540",
+                                b2: "#253050",
+                                b3: "#334068",
+                                b4: "#4d6080",
+                                f1: "#8a9ab0",
+                                f2: "#b8d0e8",
+                                f3: "#90aac8",
+                                f4: "#6080a0",
+                                red: "#d89098",
+                                green: "#90b098",
+                                yel: "#c088b8",
+                                blu: "#b090c8",
+                                pur: "#c880b0",
+                                aqu: "#80a0b0",
+                                ora: "#d890a0",
+                                gry: "#707080",
                                 acc: "#c880b0",
+                                sel: "#b068a0",
                             },
                         },
                     };
@@ -2709,13 +3185,18 @@
                         },
                         {
                             name: "Aksen",
-                            keys: [{ k: "acc", l: "Aksen UI" }],
+                            keys: [
+                                { k: "acc", l: "Aksen UI" },
+                                { k: "sel", l: "Warna Seleksi" },
+                            ],
                         },
                     ];
 
                     function loadCustomThemes() {
                         try {
-                            return JSON.parse(localStorage.getItem(LS_THEMES) || "[]");
+                            return JSON.parse(
+                                localStorage.getItem(LS_THEMES) || "[]",
+                            );
                         } catch (e) {
                             return [];
                         }
@@ -2724,7 +3205,10 @@
                         localStorage.setItem(LS_THEMES, JSON.stringify(list));
                     }
                     function getAllThemes() {
-                        return [BUILTIN_THEMES.ocean, BUILTIN_THEMES.ember].concat(loadCustomThemes());
+                        return [
+                            BUILTIN_THEMES.ocean,
+                            BUILTIN_THEMES.ember,
+                        ].concat(loadCustomThemes());
                     }
                     function getActiveThemeId() {
                         return localStorage.getItem(LS_ACTIVE_THEME) || "ember";
@@ -2748,12 +3232,44 @@
                         } else if (theme.id !== "ocean") {
                             THEME_VAR_KEYS.forEach(function (k) {
                                 if (theme.colors[k])
-                                    document.body.style.setProperty("--" + k, theme.colors[k]);
+                                    document.body.style.setProperty(
+                                        "--" + k,
+                                        theme.colors[k],
+                                    );
                             });
                         }
+                        /* Inject warna seleksi dinamis */
+                        var selHex = (theme.colors && theme.colors.sel) || "#8870b8";
+                        var selRgb = hexToRgb(selHex);
+                        var selBg  = selRgb
+                            ? "rgba(" + selRgb.r + "," + selRgb.g + "," + selRgb.b + ",0.28)"
+                            : "rgba(136,112,184,0.28)";
+                        var actBg  = selRgb
+                            ? "rgba(" + selRgb.r + "," + selRgb.g + "," + selRgb.b + ",0.09)"
+                            : "rgba(136,112,184,0.09)";
+                        var dynSel = document.getElementById("dyn-sel");
+                        if (!dynSel) {
+                            dynSel = document.createElement("style");
+                            dynSel.id = "dyn-sel";
+                            document.head.appendChild(dynSel);
+                        }
+                        dynSel.textContent =
+                            ".cm-s-gruvbox-dark .CodeMirror-selected," +
+                            ".cm-s-gruvbox-light .CodeMirror-selected{background:" + selBg + "!important}" +
+                            ".cm-s-gruvbox-dark .CodeMirror-activeline-background," +
+                            ".cm-s-gruvbox-light .CodeMirror-activeline-background{background:" + actBg + "!important}";
                         localStorage.setItem(LS_ACTIVE_THEME, theme.id);
                         cm.refresh();
                         renderThemeDrop();
+                    }
+
+                    /* Helper hex → {r,g,b} */
+                    function hexToRgb(hex) {
+                        hex = hex.replace(/^#/, "");
+                        if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+                        var n = parseInt(hex, 16);
+                        if (isNaN(n)) return null;
+                        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
                     }
 
                     /* ── Dropdown daftar tema ── */
@@ -2764,7 +3280,9 @@
                             activeId = getActiveThemeId();
                         all.forEach(function (theme) {
                             var row = document.createElement("div");
-                            row.className = "fdrop-file" + (theme.id === activeId ? " active" : "");
+                            row.className =
+                                "fdrop-file" +
+                                (theme.id === activeId ? " active" : "");
 
                             var sw = document.createElement("span");
                             sw.className = "thswatches";
@@ -2794,20 +3312,31 @@
                                 }
 
                                 /* Double-click nama → rename */
-                                lbl.addEventListener("dblclick", function(e) {
+                                lbl.addEventListener("dblclick", function (e) {
                                     e.stopPropagation();
                                     startThemeRename();
                                 });
-                                lbl.addEventListener("keydown", function(e) {
-                                    if (e.key === "Enter") { e.preventDefault(); lbl.blur(); }
-                                    if (e.key === "Escape") { lbl.textContent = theme.name; lbl.blur(); }
+                                lbl.addEventListener("keydown", function (e) {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        lbl.blur();
+                                    }
+                                    if (e.key === "Escape") {
+                                        lbl.textContent = theme.name;
+                                        lbl.blur();
+                                    }
                                 });
-                                lbl.addEventListener("blur", function() {
+                                lbl.addEventListener("blur", function () {
                                     lbl.contentEditable = "false";
-                                    var newName = lbl.textContent.trim().slice(0, 32);
+                                    var newName = lbl.textContent
+                                        .trim()
+                                        .slice(0, 32);
                                     if (newName && newName !== theme.name) {
                                         var custom = loadCustomThemes();
-                                        custom.forEach(function(t) { if(t.id === theme.id) t.name = newName; });
+                                        custom.forEach(function (t) {
+                                            if (t.id === theme.id)
+                                                t.name = newName;
+                                        });
                                         saveCustomThemes(custom);
                                         theme.name = newName;
                                     }
@@ -2816,7 +3345,8 @@
 
                                 /* Grup tombol aksi — selalu visible (tidak pakai fdrop-action opacity:0) */
                                 var acts = document.createElement("span");
-                                acts.style.cssText = "display:flex;gap:2px;flex-shrink:0;";
+                                acts.style.cssText =
+                                    "display:flex;gap:2px;flex-shrink:0;";
 
                                 /* Tombol rename (pensil) */
                                 var ren = document.createElement("span");
@@ -2824,7 +3354,7 @@
                                 ren.style.opacity = "0.6";
                                 ren.title = "Rename tema (atau klik 2x nama)";
                                 ren.innerHTML = ICON_PENCIL;
-                                ren.addEventListener("click", function(e) {
+                                ren.addEventListener("click", function (e) {
                                     e.stopPropagation();
                                     startThemeRename();
                                 });
@@ -2835,7 +3365,8 @@
                                 edit.className = "fdrop-action fdrop-ren";
                                 edit.style.opacity = "0.6";
                                 edit.title = "Edit warna tema";
-                                edit.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>';
+                                edit.innerHTML =
+                                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>';
                                 edit.addEventListener("click", function (e) {
                                     e.stopPropagation();
                                     openThemeEditor(theme);
@@ -2848,7 +3379,9 @@
                                 del.style.opacity = "0.6";
                                 wireArchiveBtn(del, {
                                     title: "Pindah ke arsip tema",
-                                    onArchive: function() { archiveTheme(theme.id); }
+                                    onArchive: function () {
+                                        archiveTheme(theme.id);
+                                    },
                                 });
                                 acts.appendChild(del);
 
@@ -2856,7 +3389,8 @@
                             }
 
                             row.addEventListener("click", function () {
-                                if (theme.id !== getActiveThemeId()) applyTheme(theme);
+                                if (theme.id !== getActiveThemeId())
+                                    applyTheme(theme);
                             });
                             drop.appendChild(row);
                         });
@@ -2879,35 +3413,61 @@
                             var btnArcThm = document.createElement("div");
                             btnArcThm.className = "fdrop-new";
                             btnArcThm.style.color = "var(--f4)";
-                            btnArcThm.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Arsip tema (' + arcThm.length + ')';
-                            btnArcThm.addEventListener("click", function() { openThemeArchivePanel(); });
+                            btnArcThm.innerHTML =
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Arsip tema (' +
+                                arcThm.length +
+                                ")";
+                            btnArcThm.addEventListener("click", function () {
+                                openThemeArchivePanel();
+                            });
                             drop.appendChild(btnArcThm);
                         }
                     }
 
                     var LS_THEME_ARC = "jspg_theme_archive";
                     function loadThemeArchive() {
-                        try { return JSON.parse(localStorage.getItem(LS_THEME_ARC) || "[]"); } catch(e) { return []; }
+                        try {
+                            return JSON.parse(
+                                localStorage.getItem(LS_THEME_ARC) || "[]",
+                            );
+                        } catch (e) {
+                            return [];
+                        }
                     }
-                    function saveThemeArchive(arr) { localStorage.setItem(LS_THEME_ARC, JSON.stringify(arr)); }
+                    function saveThemeArchive(arr) {
+                        localStorage.setItem(LS_THEME_ARC, JSON.stringify(arr));
+                    }
 
                     function archiveTheme(id) {
                         var custom = loadCustomThemes();
                         var found = null;
-                        custom = custom.filter(function(t){ if(t.id===id){found=t;return false;} return true; });
+                        custom = custom.filter(function (t) {
+                            if (t.id === id) {
+                                found = t;
+                                return false;
+                            }
+                            return true;
+                        });
                         if (!found) return;
                         saveCustomThemes(custom);
                         var arc = loadThemeArchive();
                         arc.push(found);
                         saveThemeArchive(arc);
-                        if (getActiveThemeId() === id) applyTheme(BUILTIN_THEMES.ocean);
+                        if (getActiveThemeId() === id)
+                            applyTheme(BUILTIN_THEMES.ocean);
                         else renderThemeDrop();
                     }
 
                     function restoreTheme(id) {
                         var arc = loadThemeArchive();
                         var found = null;
-                        arc = arc.filter(function(t){ if(t.id===id){found=t;return false;} return true; });
+                        arc = arc.filter(function (t) {
+                            if (t.id === id) {
+                                found = t;
+                                return false;
+                            }
+                            return true;
+                        });
                         if (!found) return;
                         saveThemeArchive(arc);
                         var custom = loadCustomThemes();
@@ -2918,15 +3478,20 @@
                     }
 
                     function permDeleteTheme(id) {
-                        var arc = loadThemeArchive().filter(function(t){ return t.id !== id; });
+                        var arc = loadThemeArchive().filter(function (t) {
+                            return t.id !== id;
+                        });
                         saveThemeArchive(arc);
                         renderThemeArchivePanel();
                     }
 
                     function openThemeArchivePanel() {
-                        document.getElementById("arc-head-title").textContent = "";
+                        document.getElementById("arc-head-title").textContent =
+                            "";
                         renderThemeArchivePanel();
-                        document.getElementById("arc-overlay").classList.add("show");
+                        document
+                            .getElementById("arc-overlay")
+                            .classList.add("show");
                     }
 
                     function renderThemeArchivePanel() {
@@ -2942,14 +3507,14 @@
                             list.appendChild(emp);
                             return;
                         }
-                        arc.forEach(function(theme) {
+                        arc.forEach(function (theme) {
                             var row = document.createElement("div");
                             row.className = "arc-item";
 
                             var sw = document.createElement("span");
                             sw.className = "thswatches";
                             sw.style.flexShrink = "0";
-                            SWATCH_KEYS.forEach(function(k) {
+                            SWATCH_KEYS.forEach(function (k) {
                                 var d = document.createElement("span");
                                 d.className = "thdot";
                                 d.style.background = theme.colors[k] || "#888";
@@ -2962,14 +3527,19 @@
 
                             var rest = document.createElement("button");
                             rest.className = "arc-restore";
-                            rest.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.27"/></svg> Kembalikan';
-                            rest.addEventListener("click", function() { restoreTheme(theme.id); });
+                            rest.innerHTML =
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.27"/></svg> Kembalikan';
+                            rest.addEventListener("click", function () {
+                                restoreTheme(theme.id);
+                            });
 
                             var perm = document.createElement("button");
                             perm.className = "arc-perm";
                             perm.title = "Hapus permanen";
                             perm.innerHTML = ICON_X;
-                            perm.addEventListener("click", function() { permDeleteTheme(theme.id); });
+                            perm.addEventListener("click", function () {
+                                permDeleteTheme(theme.id);
+                            });
 
                             row.appendChild(sw);
                             row.appendChild(nm);
@@ -2985,7 +3555,9 @@
                         editingThemeId = null;
 
                     function openThemeEditor(theme) {
-                        var base = theme ? theme.colors : resolveTheme(getActiveThemeId()).colors;
+                        var base = theme
+                            ? theme.colors
+                            : resolveTheme(getActiveThemeId()).colors;
                         editorColors = {};
                         editorHSL = {};
                         THEME_VAR_KEYS.forEach(function (k) {
@@ -2999,18 +3571,33 @@
                             : "Tema Baru " + (loadCustomThemes().length + 1);
                         renderThedBody();
                         applyEditorColorsLive();
-                        document.getElementById("thed-overlay").classList.add("show");
+                        document
+                            .getElementById("thed-overlay")
+                            .classList.add("show");
                     }
 
                     function closeThemeEditor(revert) {
-                        document.getElementById("thed-overlay").classList.remove("show");
-                        if (revert) applyTheme(resolveTheme(getActiveThemeId()));
+                        document
+                            .getElementById("thed-overlay")
+                            .classList.remove("show");
+                        /* Tutup & reset panel paste massal */
+                        var pp = document.getElementById("thed-paste-panel");
+                        if (pp) pp.classList.remove("show");
+                        var pb = document.getElementById("thed-paste");
+                        if (pb) pb.classList.remove("active", "pasted", "error");
+                        var ta = document.getElementById("thed-paste-ta");
+                        if (ta) ta.value = "";
+                        if (revert)
+                            applyTheme(resolveTheme(getActiveThemeId()));
                     }
 
                     function applyEditorColorsLive() {
                         document.body.classList.remove("theme-ember");
                         THEME_VAR_KEYS.forEach(function (k) {
-                            document.body.style.setProperty("--" + k, editorColors[k]);
+                            document.body.style.setProperty(
+                                "--" + k,
+                                editorColors[k],
+                            );
                         });
                     }
 
@@ -3108,15 +3695,17 @@
                         cpkWrap.appendChild(hexRow);
 
                         /* State picker internal */
-                        var ph = editorHSL[key].h;  /* hue 0-360 */
+                        var ph = editorHSL[key].h; /* hue 0-360 */
                         var ps = editorHSL[key].s / 100; /* sat 0-1 */
-                        var pv = editorHSL[key].l / 100; /* val 0-1 (pakai L sebagai approx) */
+                        var pv =
+                            editorHSL[key].l /
+                            100; /* val 0-1 (pakai L sebagai approx) */
                         /* Convert HSL to HSV untuk inisialisasi */
-                        (function() {
+                        (function () {
                             var h = editorHSL[key].h;
                             var sl = editorHSL[key].s / 100;
-                            var l  = editorHSL[key].l / 100;
-                            var v  = l + sl * Math.min(l, 1 - l);
+                            var l = editorHSL[key].l / 100;
+                            var v = l + sl * Math.min(l, 1 - l);
                             ps = v === 0 ? 0 : 2 * (1 - l / v);
                             pv = v;
                             ph = h;
@@ -3124,7 +3713,8 @@
 
                         function drawCanvas() {
                             var ctx = canvas.getContext("2d");
-                            var w = canvas.width, h = canvas.height;
+                            var w = canvas.width,
+                                h = canvas.height;
                             /* Background: hue color */
                             ctx.clearRect(0, 0, w, h);
                             var baseColor = "hsl(" + ph + ",100%,50%)";
@@ -3143,12 +3733,12 @@
                             ctx.fillStyle = gB;
                             ctx.fillRect(0, 0, w, h);
                             /* Thumb: pakai % supaya tidak offset saat canvas CSS size ≠ internal size */
-                            thumb.style.left = (ps * 100) + "%";
-                            thumb.style.top  = ((1 - pv) * 100) + "%";
+                            thumb.style.left = ps * 100 + "%";
+                            thumb.style.top = (1 - pv) * 100 + "%";
                         }
 
                         function updateHueThumb() {
-                            hueThumb.style.left = ((ph / 360) * 100) + "%";
+                            hueThumb.style.left = (ph / 360) * 100 + "%";
                         }
 
                         function hsvToHex(h, s, v) {
@@ -3159,30 +3749,64 @@
                             var p = v * (1 - s);
                             var q = v * (1 - f * s);
                             var t = v * (1 - (1 - f) * s);
-                            if (i === 0) { r=v; g=t; b=p; }
-                            else if (i === 1) { r=q; g=v; b=p; }
-                            else if (i === 2) { r=p; g=v; b=t; }
-                            else if (i === 3) { r=p; g=q; b=v; }
-                            else if (i === 4) { r=t; g=p; b=v; }
-                            else              { r=v; g=p; b=q; }
-                            function toH(x) { return Math.round(x*255).toString(16).padStart(2,"0"); }
+                            if (i === 0) {
+                                r = v;
+                                g = t;
+                                b = p;
+                            } else if (i === 1) {
+                                r = q;
+                                g = v;
+                                b = p;
+                            } else if (i === 2) {
+                                r = p;
+                                g = v;
+                                b = t;
+                            } else if (i === 3) {
+                                r = p;
+                                g = q;
+                                b = v;
+                            } else if (i === 4) {
+                                r = t;
+                                g = p;
+                                b = v;
+                            } else {
+                                r = v;
+                                g = p;
+                                b = q;
+                            }
+                            function toH(x) {
+                                return Math.round(x * 255)
+                                    .toString(16)
+                                    .padStart(2, "0");
+                            }
                             return "#" + toH(r) + toH(g) + toH(b);
                         }
 
                         function hexToHsv(hexStr) {
-                            hexStr = (hexStr || "#888").replace("#","");
-                            if (hexStr.length === 3) hexStr = hexStr.split("").map(function(c){return c+c;}).join("");
-                            var r = parseInt(hexStr.substr(0,2),16)/255;
-                            var g = parseInt(hexStr.substr(2,2),16)/255;
-                            var b = parseInt(hexStr.substr(4,2),16)/255;
-                            var max = Math.max(r,g,b), min = Math.min(r,g,b), d = max - min;
-                            var h = 0, s = max === 0 ? 0 : d/max, v = max;
+                            hexStr = (hexStr || "#888").replace("#", "");
+                            if (hexStr.length === 3)
+                                hexStr = hexStr
+                                    .split("")
+                                    .map(function (c) {
+                                        return c + c;
+                                    })
+                                    .join("");
+                            var r = parseInt(hexStr.substr(0, 2), 16) / 255;
+                            var g = parseInt(hexStr.substr(2, 2), 16) / 255;
+                            var b = parseInt(hexStr.substr(4, 2), 16) / 255;
+                            var max = Math.max(r, g, b),
+                                min = Math.min(r, g, b),
+                                d = max - min;
+                            var h = 0,
+                                s = max === 0 ? 0 : d / max,
+                                v = max;
                             if (d !== 0) {
-                                if (max === r) h = ((g-b)/d + (g<b?6:0)) * 60;
-                                else if (max === g) h = ((b-r)/d + 2) * 60;
-                                else h = ((r-g)/d + 4) * 60;
+                                if (max === r)
+                                    h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
+                                else if (max === g) h = ((b - r) / d + 2) * 60;
+                                else h = ((r - g) / d + 4) * 60;
                             }
-                            return {h: h, s: s, v: v};
+                            return { h: h, s: s, v: v };
                         }
 
                         function applyColor(hexStr) {
@@ -3212,16 +3836,29 @@
                             pv = Math.max(0, Math.min(1, 1 - cy));
                             onPickerChange();
                         }
-                        canvasWrap.addEventListener("pointerdown", function(e) {
-                            draggingCanvas = true;
-                            canvasWrap.setPointerCapture(e.pointerId);
-                            handleCanvasDrag(e);
+                        canvasWrap.addEventListener(
+                            "pointerdown",
+                            function (e) {
+                                draggingCanvas = true;
+                                canvasWrap.setPointerCapture(e.pointerId);
+                                handleCanvasDrag(e);
+                            },
+                        );
+                        canvasWrap.addEventListener(
+                            "pointermove",
+                            function (e) {
+                                if (draggingCanvas) handleCanvasDrag(e);
+                            },
+                        );
+                        canvasWrap.addEventListener("pointerup", function () {
+                            draggingCanvas = false;
                         });
-                        canvasWrap.addEventListener("pointermove", function(e) {
-                            if (draggingCanvas) handleCanvasDrag(e);
-                        });
-                        canvasWrap.addEventListener("pointerup", function() { draggingCanvas = false; });
-                        canvasWrap.addEventListener("pointercancel", function() { draggingCanvas = false; });
+                        canvasWrap.addEventListener(
+                            "pointercancel",
+                            function () {
+                                draggingCanvas = false;
+                            },
+                        );
 
                         /* Hue slider drag */
                         var draggingHue = false;
@@ -3232,30 +3869,36 @@
                             updateHueThumb();
                             onPickerChange();
                         }
-                        hueWrap.addEventListener("pointerdown", function(e) {
+                        hueWrap.addEventListener("pointerdown", function (e) {
                             draggingHue = true;
                             hueWrap.setPointerCapture(e.pointerId);
                             handleHueDrag(e);
                         });
-                        hueWrap.addEventListener("pointermove", function(e) {
+                        hueWrap.addEventListener("pointermove", function (e) {
                             if (draggingHue) handleHueDrag(e);
                         });
-                        hueWrap.addEventListener("pointerup", function() { draggingHue = false; });
-                        hueWrap.addEventListener("pointercancel", function() { draggingHue = false; });
+                        hueWrap.addEventListener("pointerup", function () {
+                            draggingHue = false;
+                        });
+                        hueWrap.addEventListener("pointercancel", function () {
+                            draggingHue = false;
+                        });
 
                         /* Hex input */
-                        hexInput.addEventListener("input", function() {
+                        hexInput.addEventListener("input", function () {
                             var v = hexInput.value.trim();
                             if (!v.startsWith("#")) v = "#" + v;
                             if (/^#[0-9a-fA-F]{6}$/.test(v)) {
                                 var hsv = hexToHsv(v);
-                                ph = hsv.h; ps = hsv.s; pv = hsv.v;
+                                ph = hsv.h;
+                                ps = hsv.s;
+                                pv = hsv.v;
                                 applyColor(v.toLowerCase());
                                 drawCanvas();
                                 updateHueThumb();
                             }
                         });
-                        hexInput.addEventListener("blur", function() {
+                        hexInput.addEventListener("blur", function () {
                             hexInput.value = editorColors[key];
                         });
 
@@ -3279,17 +3922,22 @@
                                 body = document.getElementById("thed-body");
                             Array.prototype.forEach.call(
                                 body.querySelectorAll(".throw.expanded"),
-                                function (r) { r.classList.remove("expanded"); }
+                                function (r) {
+                                    r.classList.remove("expanded");
+                                },
                             );
                             if (!wasOpen) {
                                 wrap.classList.add("expanded");
                                 /* Init tampilan picker setelah visible */
-                                requestAnimationFrame(function() {
+                                requestAnimationFrame(function () {
                                     var hsv = hexToHsv(editorColors[key]);
-                                    ph = hsv.h; ps = hsv.s; pv = hsv.v;
+                                    ph = hsv.h;
+                                    ps = hsv.s;
+                                    pv = hsv.v;
                                     drawCanvas();
                                     updateHueThumb();
-                                    hexSwatch.style.background = editorColors[key];
+                                    hexSwatch.style.background =
+                                        editorColors[key];
                                     hexInput.value = editorColors[key];
                                 });
                             }
@@ -3300,8 +3948,9 @@
 
                     function saveTheme() {
                         var name =
-                            document.getElementById("thed-name").textContent
-                                .trim()
+                            document
+                                .getElementById("thed-name")
+                                .textContent.trim()
                                 .slice(0, 32) || "Tema";
                         var custom = loadCustomThemes();
                         var id = editingThemeId || "custom-" + Date.now();
@@ -3321,19 +3970,165 @@
                     }
 
                     /* ── Wiring tombol panel editor ── */
-                    document.getElementById("thed-cancel").addEventListener("click", function () {
-                        closeThemeEditor(true);
-                    });
-                    document.getElementById("thed-save").addEventListener("click", saveTheme);
-                    document.getElementById("thed-overlay").addEventListener("click", function (e) {
-                        if (e.target === this) closeThemeEditor(true);
-                    });
-                    document.getElementById("thed-name").addEventListener("keydown", function (e) {
-                        if (e.key === "Enter") {
-                            e.preventDefault();
-                            this.blur();
+
+                    /* ── Paste Kode Warna Massal ──
+                       Klik tombol → toggle textarea panel.
+                       Begitu user paste/ketik, warna diekstrak otomatis (top-to-bottom)
+                       dan diisi ke slot editor sesuai urutan visual (COLOR_GROUPS). */
+
+                    /* Urutan slot editor mengikuti urutan visual COLOR_GROUPS */
+                    function getOrderedEditorKeys() {
+                        var keys = [];
+                        COLOR_GROUPS.forEach(function (g) {
+                            g.keys.forEach(function (item) { keys.push(item.k); });
+                        });
+                        return keys;
+                    }
+
+                    /* Ekstrak semua warna (HEX / RGB / RGBA) dari teks, top-to-bottom */
+                    function extractColorsFromText(text) {
+                        var colors = [];
+                        /* Gabungan: #xxx, #xxxxxx, #xxxxxxxx, rgb(...), rgba(...) */
+                        var re = /#([0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b|rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)/gi;
+                        var m;
+                        function clamp(n) { return Math.max(0, Math.min(255, n)); }
+                        function toHH(n) { return clamp(n).toString(16).padStart(2, "0"); }
+                        while ((m = re.exec(text))) {
+                            if (m[1]) {
+                                /* HEX — normalisasi ke 6 digit */
+                                var h = m[1];
+                                if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+                                if (h.length === 8) h = h.slice(0, 6); /* buang alpha channel */
+                                colors.push("#" + h.toLowerCase());
+                            } else {
+                                /* RGB / RGBA → konversi ke hex */
+                                colors.push("#" + toHH(parseInt(m[2])) + toHH(parseInt(m[3])) + toHH(parseInt(m[4])));
+                            }
+                        }
+                        return colors;
+                    }
+
+                    /* Terapkan satu hex ke slot [key]: update closure via hexInput dispatch */
+                    function applyBulkColor(key, hex) {
+                        var row = document.querySelector(".throw[data-key='" + key + "']");
+                        if (!row) return;
+                        var hexInp = row.querySelector(".cpk-hex-input");
+                        if (hexInp) {
+                            /* Trigger listener closure → memanggil applyColor(hex) di dalam */
+                            hexInp.value = hex;
+                            hexInp.dispatchEvent(new Event("input", { bubbles: true }));
+                        } else {
+                            /* Fallback langsung jika picker belum dirender */
+                            editorColors[key] = hex;
+                            var sw  = row.querySelector(".thsw");
+                            var lbl = row.querySelector(".thhex");
+                            if (sw)  sw.style.background = hex;
+                            if (lbl) lbl.textContent = hex;
+                            document.body.style.setProperty("--" + key, hex);
+                        }
+                    }
+
+                    /* Proses teks dari textarea: ekstrak warna → isi slot → preview */
+                    function processPasteText(text) {
+                        var colors = extractColorsFromText(text);
+                        var orderedKeys = getOrderedEditorKeys();
+                        var count = Math.min(colors.length, orderedKeys.length);
+                        var infoEl    = document.getElementById("thed-paste-info");
+                        var prevEl    = document.getElementById("thed-paste-preview");
+                        var pasteBtn  = document.getElementById("thed-paste");
+
+                        /* Update info teks */
+                        if (colors.length === 0) {
+                            infoEl.textContent = "Tidak ada kode warna yang ditemukan.";
+                            infoEl.classList.remove("has-colors");
+                            prevEl.innerHTML = "";
+                            return;
+                        }
+                        infoEl.textContent = colors.length + " warna ditemukan · " + count + " slot diisi";
+                        infoEl.classList.add("has-colors");
+
+                        /* Preview dot warna yang akan diterapkan */
+                        prevEl.innerHTML = "";
+                        colors.slice(0, orderedKeys.length).forEach(function (hex) {
+                            var d = document.createElement("span");
+                            d.className = "tpprev-dot";
+                            d.style.background = hex;
+                            d.title = hex;
+                            prevEl.appendChild(d);
+                        });
+
+                        /* Terapkan warna ke slot editor secara positional */
+                        colors.forEach(function (hex, i) {
+                            if (i >= orderedKeys.length) return;
+                            applyBulkColor(orderedKeys[i], hex);
+                        });
+
+                        /* Update CSS dinamis seleksi CodeMirror jika slot 'sel' ikut diisi */
+                        var selHex2 = editorColors.sel || "#8870b8";
+                        var rgb2    = hexToRgb(selHex2);
+                        if (rgb2) {
+                            var ds = document.getElementById("dyn-sel");
+                            if (!ds) { ds = document.createElement("style"); ds.id = "dyn-sel"; document.head.appendChild(ds); }
+                            ds.textContent =
+                                ".cm-s-gruvbox-dark .CodeMirror-selected,.cm-s-gruvbox-light .CodeMirror-selected{background:rgba(" + rgb2.r + "," + rgb2.g + "," + rgb2.b + ",0.28)!important}" +
+                                ".cm-s-gruvbox-dark .CodeMirror-activeline-background,.cm-s-gruvbox-light .CodeMirror-activeline-background{background:rgba(" + rgb2.r + "," + rgb2.g + "," + rgb2.b + ",0.09)!important}";
+                        }
+                        cm.refresh();
+
+                        /* Flash tombol paste & toast */
+                        pasteBtn.classList.remove("active");
+                        pasteBtn.classList.add("pasted");
+                        setTimeout(function () {
+                            pasteBtn.classList.remove("pasted");
+                            pasteBtn.classList.add("active"); /* kembalikan active karena panel masih terbuka */
+                        }, 1500);
+                        showToast("✓ " + count + " warna diterapkan otomatis");
+                    }
+
+                    /* Toggle panel textarea saat tombol diklik */
+                    document.getElementById("thed-paste").addEventListener("click", function () {
+                        var panel   = document.getElementById("thed-paste-panel");
+                        var ta      = document.getElementById("thed-paste-ta");
+                        var infoEl  = document.getElementById("thed-paste-info");
+                        var prevEl  = document.getElementById("thed-paste-preview");
+                        var isOpen  = panel.classList.toggle("show");
+                        this.classList.toggle("active", isOpen);
+                        if (isOpen) {
+                            /* Reset textarea saat dibuka */
+                            ta.value        = "";
+                            infoEl.textContent = "Menunggu paste\u2026";
+                            infoEl.classList.remove("has-colors");
+                            prevEl.innerHTML   = "";
+                            ta.focus();
                         }
                     });
+
+                    /* Auto-proses saat ada input ke textarea (paste / ketik) */
+                    document.getElementById("thed-paste-ta").addEventListener("input", function () {
+                        processPasteText(this.value);
+                    });
+
+                    document
+                        .getElementById("thed-cancel")
+                        .addEventListener("click", function () {
+                            closeThemeEditor(true);
+                        });
+                    document
+                        .getElementById("thed-save")
+                        .addEventListener("click", saveTheme);
+                    document
+                        .getElementById("thed-overlay")
+                        .addEventListener("click", function (e) {
+                            if (e.target === this) closeThemeEditor(true);
+                        });
+                    document
+                        .getElementById("thed-name")
+                        .addEventListener("keydown", function (e) {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                this.blur();
+                            }
+                        });
 
                     /* ── Tombol Copy kode warna ── */
                     var _toastTimer = null;
@@ -3342,78 +4137,113 @@
                         t.textContent = msg;
                         t.classList.add("show");
                         clearTimeout(_toastTimer);
-                        _toastTimer = setTimeout(function() { t.classList.remove("show"); }, 2200);
+                        _toastTimer = setTimeout(function () {
+                            t.classList.remove("show");
+                        }, 2200);
                     }
 
                     /* Peta key → label Indonesia (urut sesuai COLOR_GROUPS) */
                     var KEY_LABELS = {
-                        b0:    "Latar utama",
-                        b0s:   "Latar panel",
-                        b1:    "Latar elemen",
-                        b2:    "Hover / border",
-                        b3:    "Border aktif",
-                        b4:    "Border terang",
-                        f1:    "Teks utama",
-                        f2:    "Teks terang",
-                        f3:    "Teks sekunder",
-                        f4:    "Teks redup",
-                        pur:   "Keyword",
-                        blu:   "Variabel",
+                        b0: "Latar utama",
+                        b0s: "Latar panel",
+                        b1: "Latar elemen",
+                        b2: "Hover / border",
+                        b3: "Border aktif",
+                        b4: "Border terang",
+                        f1: "Teks utama",
+                        f2: "Teks terang",
+                        f3: "Teks sekunder",
+                        f4: "Teks redup",
+                        pur: "Keyword",
+                        blu: "Variabel",
                         green: "String",
-                        ora:   "Angka",
-                        yel:   "Definisi / Operator",
-                        aqu:   "Builtin / Meta",
-                        red:   "Tag / Error",
-                        gry:   "Komentar",
-                        acc:   "Aksen UI",
+                        ora: "Angka",
+                        yel: "Definisi / Operator",
+                        aqu: "Builtin / Meta",
+                        red: "Tag / Error",
+                        gry: "Komentar",
+                        acc: "Aksen UI",
+                        sel: "Warna Seleksi",
                     };
 
-                    document.getElementById("thed-copy").addEventListener("click", function() {
-                        var themeName = document.getElementById("thed-name").textContent.trim() || "Tema";
-                        var lines = ["Tema: " + themeName, ""];
+                    document
+                        .getElementById("thed-copy")
+                        .addEventListener("click", function () {
+                            var themeName =
+                                document
+                                    .getElementById("thed-name")
+                                    .textContent.trim() || "Tema";
+                            var lines = ["Tema: " + themeName, ""];
 
-                        /* Tulis per grup supaya output lebih rapi */
-                        var groups = [
-                            { name: "Latar Belakang", keys: ["b0","b0s","b1","b2","b3","b4"] },
-                            { name: "Teks",           keys: ["f1","f2","f3","f4"] },
-                            { name: "Warna Kode (Syntax)", keys: ["pur","blu","green","ora","yel","aqu","red","gry"] },
-                            { name: "Aksen",          keys: ["acc"] },
-                        ];
-                        groups.forEach(function(g) {
-                            lines.push("── " + g.name + " ──");
-                            g.keys.forEach(function(k) {
-                                var label = KEY_LABELS[k] || k;
-                                var color = editorColors[k] || "—";
-                                lines.push(label + ": " + color);
+                            /* Tulis per grup supaya output lebih rapi */
+                            var groups = [
+                                {
+                                    name: "Latar Belakang",
+                                    keys: ["b0", "b0s", "b1", "b2", "b3", "b4"],
+                                },
+                                {
+                                    name: "Teks",
+                                    keys: ["f1", "f2", "f3", "f4"],
+                                },
+                                {
+                                    name: "Warna Kode (Syntax)",
+                                    keys: [
+                                        "pur",
+                                        "blu",
+                                        "green",
+                                        "ora",
+                                        "yel",
+                                        "aqu",
+                                        "red",
+                                        "gry",
+                                    ],
+                                },
+                                { name: "Aksen", keys: ["acc", "sel"] },
+                            ];
+                            groups.forEach(function (g) {
+                                lines.push("── " + g.name + " ──");
+                                g.keys.forEach(function (k) {
+                                    var label = KEY_LABELS[k] || k;
+                                    var color = editorColors[k] || "—";
+                                    lines.push(label + ": " + color);
+                                });
+                                lines.push("");
                             });
-                            lines.push("");
-                        });
 
-                        var text = lines.join("\n").trimEnd();
-                        var btn = document.getElementById("thed-copy");
+                            var text = lines.join("\n").trimEnd();
+                            var btn = document.getElementById("thed-copy");
 
-                        navigator.clipboard.writeText(text).then(function() {
-                            /* Animasi ikon berubah jadi centang sebentar */
-                            var origHTML = btn.innerHTML;
-                            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>';
-                            btn.classList.add("copied");
-                            setTimeout(function() {
-                                btn.innerHTML = origHTML;
-                                btn.classList.remove("copied");
-                            }, 1800);
-                            showToast("✓ Kode warna " + themeName + " disalin!");
-                        }).catch(function() {
-                            /* Fallback untuk browser yang blokir clipboard */
-                            var ta = document.createElement("textarea");
-                            ta.value = text;
-                            ta.style.cssText = "position:fixed;opacity:0;top:0;left:0;";
-                            document.body.appendChild(ta);
-                            ta.select();
-                            document.execCommand("copy");
-                            document.body.removeChild(ta);
-                            showToast("✓ Kode warna disalin!");
+                            navigator.clipboard
+                                .writeText(text)
+                                .then(function () {
+                                    /* Animasi ikon berubah jadi centang sebentar */
+                                    var origHTML = btn.innerHTML;
+                                    btn.innerHTML =
+                                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>';
+                                    btn.classList.add("copied");
+                                    setTimeout(function () {
+                                        btn.innerHTML = origHTML;
+                                        btn.classList.remove("copied");
+                                    }, 1800);
+                                    showToast(
+                                        "✓ Kode warna " +
+                                            themeName +
+                                            " disalin!",
+                                    );
+                                })
+                                .catch(function () {
+                                    /* Fallback untuk browser yang blokir clipboard */
+                                    var ta = document.createElement("textarea");
+                                    ta.value = text;
+                                    ta.style.cssText =
+                                        "position:fixed;opacity:0;top:0;left:0;";
+                                    document.body.appendChild(ta);
+                                    ta.select();
+                                    document.execCommand("copy");
+                                    document.body.removeChild(ta);
+                                    showToast("✓ Kode warna disalin!");
+                                });
                         });
-                    });
 
                     /* Muat tema aktif saat startup */
                     applyTheme(resolveTheme(getActiveThemeId()));
