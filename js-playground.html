@@ -30,7 +30,8 @@
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Source+Code+Pro:wght@400;500&family=Inconsolata:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=PT+Mono&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5/index.min.css" rel="stylesheet" />
         <style>
             :root {
                 --b0: #0e1520;
@@ -66,9 +67,7 @@
                 height: 100%;
             }
             body {
-                font-family:
-                    ui-monospace, "SF Mono", "Fira Code", "Cascadia Code",
-                    Consolas, monospace;
+                font-family: "Geist Mono", ui-monospace, Consolas, monospace;
                 background: var(--b0);
                 color: var(--f1);
                 height: 100dvh;
@@ -472,20 +471,9 @@
                 display: flex;
                 align-items: center;
             }
-            #bfont-wrap::after {
-                content: "";
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                height: 8px;
-                background: transparent;
-            }
             #fontdrop {
                 display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
+                position: fixed; /* fixed biar bisa keluar dari parent overflow */
                 min-width: 200px;
                 background: var(--b0s);
                 border: 1px solid var(--b2);
@@ -496,8 +484,7 @@
                 flex-direction: column;
                 gap: 2px;
             }
-            #bfont-wrap:hover #fontdrop,
-            #fontdrop:hover {
+            #fontdrop.show {
                 display: flex;
             }
             .font-item {
@@ -603,7 +590,6 @@
                 transform: translateY(14px) scale(0.98);
                 transition: transform 0.18s ease;
                 box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
-                resize: both;
                 position: absolute;
             }
             #thed-overlay.show #thed {
@@ -734,6 +720,7 @@
                 padding: 10px 12px;
                 border-bottom: 1px solid var(--b1);
                 flex-shrink: 0;
+                cursor: default;
             }
             #thed-head svg {
                 width: 14px;
@@ -759,20 +746,19 @@
                 overflow-y: auto;
                 padding: 4px 6px 10px;
             }
-            /* Resize handle indicator at bottom-right */
-            #thed::after {
-                content: "";
+            /* Resize handles — diisi JS */
+            .thed-rh {
                 position: absolute;
-                right: 4px;
-                bottom: 4px;
-                width: 10px;
-                height: 10px;
-                border-right: 2px solid var(--b4);
-                border-bottom: 2px solid var(--b4);
-                border-radius: 0 0 3px 0;
-                pointer-events: none;
-                opacity: 0.5;
+                z-index: 20;
             }
+            .thed-rh-n  { top:0;    left:10px;  right:10px; height:5px; cursor:n-resize;  }
+            .thed-rh-s  { bottom:0; left:10px;  right:10px; height:5px; cursor:s-resize;  }
+            .thed-rh-e  { right:0;  top:10px;   bottom:10px;width:5px;  cursor:e-resize;  }
+            .thed-rh-w  { left:0;   top:10px;   bottom:10px;width:5px;  cursor:w-resize;  }
+            .thed-rh-ne { top:0;    right:0;    width:14px; height:14px;cursor:ne-resize; }
+            .thed-rh-nw { top:0;    left:0;     width:14px; height:14px;cursor:nw-resize; }
+            .thed-rh-se { bottom:0; right:0;    width:14px; height:14px;cursor:se-resize; }
+            .thed-rh-sw { bottom:0; left:0;     width:14px; height:14px;cursor:sw-resize; }
             .thgroup-h {
                 font-size: 10.5px;
                 text-transform: uppercase;
@@ -954,61 +940,44 @@
                 width: 11px;
                 height: 11px;
             }
-            #thed-foot {
-                display: flex;
-                gap: 8px;
-                padding: 10px 12px;
-                border-top: 1px solid var(--b1);
-                flex-shrink: 0;
-            }
             #thed-save {
-                flex: 1;
+                width: 26px;
+                height: 26px;
+                flex-shrink: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 6px;
-                height: 32px;
-                border-radius: var(--rad);
+                border-radius: 5px;
                 border: 1px solid var(--b3);
-                background: var(--b1);
+                background: transparent;
                 color: var(--green);
-                font-family: inherit;
-                font-size: 12.5px;
-                font-weight: 600;
                 cursor: pointer;
-                transition: background 0.12s;
+                transition: background 0.1s, color 0.1s, border-color 0.1s;
             }
             #thed-save:hover {
-                background: var(--b2);
+                background: var(--b1);
+                border-color: var(--green);
             }
-            #thed-save svg {
-                width: 14px;
-                height: 14px;
-            }
+            #thed-save svg { pointer-events: none; }
             #thed-cancel {
-                width: 32px;
-                height: 32px;
+                width: 26px;
+                height: 26px;
                 flex-shrink: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: var(--rad);
+                border-radius: 5px;
                 border: 1px solid var(--b2);
                 background: transparent;
                 color: var(--f3);
                 cursor: pointer;
-                transition:
-                    background 0.12s,
-                    color 0.12s;
+                transition: background 0.1s, color 0.1s;
             }
             #thed-cancel:hover {
                 background: var(--b1);
                 color: var(--f1);
             }
-            #thed-cancel svg {
-                width: 14px;
-                height: 14px;
-            }
+            #thed-cancel svg { pointer-events: none; }
 
             /* ── Toolbar ── */
             #tb {
@@ -1453,21 +1422,36 @@
 
             /* ── Scrollbars ── */
             #cl::-webkit-scrollbar,
-            .CodeMirror-vscrollbar,
-            .CodeMirror-hscrollbar {
+            .CodeMirror-vscrollbar::-webkit-scrollbar,
+            .CodeMirror-hscrollbar::-webkit-scrollbar {
                 width: 8px;
                 height: 8px;
             }
-            #cl::-webkit-scrollbar-track {
+            #cl::-webkit-scrollbar-track,
+            .CodeMirror-vscrollbar::-webkit-scrollbar-track,
+            .CodeMirror-hscrollbar::-webkit-scrollbar-track {
                 background: var(--b0);
             }
             #cl::-webkit-scrollbar-thumb,
-            .CodeMirror-vscrollbar::-webkit-scrollbar-thumb {
+            .CodeMirror-vscrollbar::-webkit-scrollbar-thumb,
+            .CodeMirror-hscrollbar::-webkit-scrollbar-thumb {
                 background: var(--b2);
                 border-radius: 4px;
             }
-            #cl::-webkit-scrollbar-thumb:hover {
+            #cl::-webkit-scrollbar-thumb:hover,
+            .CodeMirror-vscrollbar::-webkit-scrollbar-thumb:hover,
+            .CodeMirror-hscrollbar::-webkit-scrollbar-thumb:hover {
                 background: var(--b3);
+            }
+            /* Sudut antara vscrollbar & hscrollbar */
+            .CodeMirror-scroll::-webkit-scrollbar-corner {
+                background: var(--b0);
+            }
+            /* Sembunyikan filler pojok yang muncul sebagai "ghost scrollbar"
+               saat word-wrap mati dan baris panjang muncul */
+            .CodeMirror-scrollbar-filler,
+            .CodeMirror-gutter-filler {
+                background: var(--b0) !important;
             }
 
             @media (max-width: 480px) {
@@ -1774,10 +1758,14 @@
                             d="M12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
                         />
                     </svg>
+                    <span id="thed-drag-grip" title="Geser popup" style="display:flex;align-items:center;gap:2px;flex-shrink:0;padding:0 3px;opacity:0.35;cursor:move;">
+                        <svg viewBox="0 0 10 16" width="8" height="13" fill="currentColor"><circle cx="3" cy="2" r="1.3"/><circle cx="7" cy="2" r="1.3"/><circle cx="3" cy="6" r="1.3"/><circle cx="7" cy="6" r="1.3"/><circle cx="3" cy="10" r="1.3"/><circle cx="7" cy="10" r="1.3"/><circle cx="3" cy="14" r="1.3"/><circle cx="7" cy="14" r="1.3"/></svg>
+                    </span>
                     <span
                         id="thed-name"
-                        contenteditable="true"
+                        contenteditable="false"
                         spellcheck="false"
+                        title="Klik 2x untuk rename"
                         >Tema Baru</span
                     >
                     <button id="thed-paste" title="Tempel kode warna">
@@ -1812,6 +1800,18 @@
                             />
                         </svg>
                     </button>
+                    <div style="width:1px;height:18px;background:var(--b2);margin:0 2px;flex-shrink:0;"></div>
+                    <button id="thed-cancel" title="Batal, kembali ke tema sebelumnya">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                    <button id="thed-save" title="Simpan Konfigurasi">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    </button>
                 </div>
                 <div id="thed-paste-panel">
                     <textarea
@@ -1823,37 +1823,6 @@
                     <div id="thed-paste-preview"></div>
                 </div>
                 <div id="thed-body"><!-- diisi JS --></div>
-                <div id="thed-foot">
-                    <button
-                        id="thed-cancel"
-                        title="Batal, kembali ke tema sebelumnya"
-                    >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                    </button>
-                    <button id="thed-save">
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                        Simpan Konfigurasi
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -3547,6 +3516,7 @@
                         saveThemeArchive(arc);
                         if (getActiveThemeId() === id)
                             applyTheme(BUILTIN_THEMES.ocean);
+                        renderThemeDrop(); /* Fix: update UI setelah arsip */
                     }
 
                     function restoreTheme(id) {
@@ -3662,12 +3632,16 @@
                             : "Tema Baru " + (loadCustomThemes().length + 1);
                         renderThedBody();
                         applyEditorColorsLive();
-                        /* Reset posisi popup ke tengah setiap kali dibuka */
+                        /* Reset posisi & ukuran popup ke default setiap kali dibuka */
                         var thed = document.getElementById("thed");
-                        thed.style.left = "";
-                        thed.style.top = "";
-                        thed.style.width = "";
-                        thed.style.height = "";
+                        thed.style.left      = "";
+                        thed.style.top       = "";
+                        thed.style.width     = "";
+                        thed.style.height    = "";
+                        thed.style.maxWidth  = "";
+                        thed.style.maxHeight = "";
+                        thed.style.margin    = "";
+                        thed.style.position  = "";
                         document
                             .getElementById("thed-overlay")
                             .classList.add("show");
@@ -4225,16 +4199,33 @@
                                 this.blur();
                             }
                         });
+                    /* Double-click untuk rename judul tema di editor */
+                    (function() {
+                        var nm = document.getElementById("thed-name");
+                        nm.addEventListener("dblclick", function(e) {
+                            e.stopPropagation();
+                            nm.contentEditable = "true";
+                            nm.focus();
+                            var rng = document.createRange();
+                            rng.selectNodeContents(nm);
+                            window.getSelection().removeAllRanges();
+                            window.getSelection().addRange(rng);
+                        });
+                        nm.addEventListener("blur", function() {
+                            nm.contentEditable = "false";
+                        });
+                    })();
 
                     /* ── Drag to move theme editor popup ── */
                     (function () {
                         var head = document.getElementById("thed-head");
+                        var grip = document.getElementById("thed-drag-grip");
                         var thed = document.getElementById("thed");
                         var overlay = document.getElementById("thed-overlay");
                         var dragging = false;
                         var startX, startY, origLeft, origTop;
 
-                        head.style.cursor = "move";
+                        /* Grip cursor */
                         head.style.userSelect = "none";
 
                         function getPos() {
@@ -4243,8 +4234,11 @@
                         }
 
                         function onDown(e) {
-                            /* skip clicks on buttons inside header */
-                            if (e.target !== head && e.target.closest && e.target.closest("button,input,[contenteditable]")) return;
+                            /* Hanya drag dari grip ATAU area head yg bukan button/input/contenteditable-aktif */
+                            var fromGrip = e.target === grip || (grip && grip.contains(e.target));
+                            if (!fromGrip) {
+                                if (e.target.closest && e.target.closest('button,input,[contenteditable="true"]')) return;
+                            }
                             dragging = true;
                             var clientX = e.touches ? e.touches[0].clientX : e.clientX;
                             var clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -4269,11 +4263,12 @@
                             var dy = clientY - startY;
                             var newLeft = origLeft + dx;
                             var newTop = origTop + dy;
-                            /* Clamp within viewport */
-                            var maxLeft = window.innerWidth - thed.offsetWidth;
-                            var maxTop = window.innerHeight - 60;
-                            newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-                            newTop = Math.max(0, Math.min(newTop, maxTop));
+                            /* Clamp: minimal 80px popup tetap terlihat di viewport */
+                            var minVis = 80;
+                            var vw = window.innerWidth;
+                            var vh = window.innerHeight;
+                            newLeft = Math.max(minVis - thed.offsetWidth, Math.min(newLeft, vw - minVis));
+                            newTop  = Math.max(0, Math.min(newTop, vh - 40));
                             thed.style.left = newLeft + "px";
                             thed.style.top = newTop + "px";
                         }
@@ -4288,6 +4283,71 @@
                         document.addEventListener("touchmove", onMove, { passive: false });
                         document.addEventListener("mouseup", onUp);
                         document.addEventListener("touchend", onUp);
+                    })();
+
+                    /* ── Custom resize handles (semua sisi) ── */
+                    (function () {
+                        var thed = document.getElementById("thed");
+                        var DIRS = ["n","s","e","w","ne","nw","se","sw"];
+                        DIRS.forEach(function(dir) {
+                            var h = document.createElement("div");
+                            h.className = "thed-rh thed-rh-" + dir;
+                            thed.appendChild(h);
+
+                            h.addEventListener("mousedown", function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var rect = thed.getBoundingClientRect();
+                                var sx = e.clientX, sy = e.clientY;
+                                var sl = rect.left, st = rect.top;
+                                var sw = rect.width, sh = rect.height;
+                                var minW = 260, minH = 180;
+
+                                /* Ensure absolute positioning */
+                                thed.style.position = "absolute";
+                                thed.style.left = sl + "px";
+                                thed.style.top  = st + "px";
+                                thed.style.width  = sw + "px";
+                                thed.style.height = sh + "px";
+                                thed.style.maxWidth  = "none";
+                                thed.style.maxHeight = "none";
+                                thed.style.margin = "0";
+                                /* Disable transition saat resize */
+                                thed.style.transition = "none";
+
+                                function onMove(ev) {
+                                    var dx = ev.clientX - sx;
+                                    var dy = ev.clientY - sy;
+                                    var nw = sw, nh = sh, nl = sl, nt = st;
+
+                                    if (dir.indexOf("e") !== -1) nw = Math.max(minW, sw + dx);
+                                    if (dir.indexOf("s") !== -1) nh = Math.max(minH, sh + dy);
+                                    if (dir.indexOf("w") !== -1) {
+                                        nw = Math.max(minW, sw - dx);
+                                        nl = sl + (sw - nw);
+                                    }
+                                    if (dir.indexOf("n") !== -1) {
+                                        nh = Math.max(minH, sh - dy);
+                                        nt = st + (sh - nh);
+                                    }
+                                    /* Clamp posisi agar tidak keluar viewport */
+                                    if (nl < 0) { nw += nl; nl = 0; }
+                                    if (nt < 0) { nh += nt; nt = 0; }
+                                    thed.style.left   = nl + "px";
+                                    thed.style.top    = nt + "px";
+                                    thed.style.width  = nw + "px";
+                                    thed.style.height = nh + "px";
+                                }
+                                function onUp() {
+                                    /* Kembalikan transition */
+                                    thed.style.transition = "";
+                                    document.removeEventListener("mousemove", onMove);
+                                    document.removeEventListener("mouseup", onUp);
+                                }
+                                document.addEventListener("mousemove", onMove);
+                                document.addEventListener("mouseup", onUp);
+                            });
+                        });
                     })();
 
                     /* ── Tombol Copy kode warna ── */
@@ -4414,19 +4474,16 @@
                         var LS_FONTSIZE = "jspg_fontsize";
 
                         var FONTS = [
-                            { id: "system",        name: "System Default",    stack: 'ui-monospace,"SF Mono","Fira Code","Cascadia Code",Consolas,monospace', preview: "Aa 01 {}" },
-                            { id: "firacode",      name: "Fira Code",         stack: '"Fira Code",monospace',       preview: "Aa 01 {}" },
-                            { id: "jetbrains",     name: "JetBrains Mono",    stack: '"JetBrains Mono",monospace',  preview: "Aa 01 {}" },
-                            { id: "sourcecodepro", name: "Source Code Pro",   stack: '"Source Code Pro",monospace', preview: "Aa 01 {}" },
-                            { id: "inconsolata",   name: "Inconsolata",       stack: '"Inconsolata",monospace',     preview: "Aa 01 {}" },
-                            { id: "ibmplexmono",   name: "IBM Plex Mono",     stack: '"IBM Plex Mono",monospace',   preview: "Aa 01 {}" },
-                            { id: "spacemono",     name: "Space Mono",        stack: '"Space Mono",monospace',      preview: "Aa 01 {}" },
-                            { id: "robotomono",    name: "Roboto Mono",       stack: '"Roboto Mono",monospace',     preview: "Aa 01 {}" },
+                            { id: "system",       name: "System Default",  stack: 'ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace', preview: "Aa 01 {}" },
+                            { id: "dmmono",       name: "DM Mono",         stack: '"DM Mono",monospace',           preview: "Aa 01 {}" },
+                            { id: "geistmono",    name: "Geist Mono",      stack: '"Geist Mono",monospace',        preview: "Aa 01 {}" },
+                            { id: "ptmono",       name: "PT Mono",         stack: '"PT Mono",monospace',           preview: "Aa 01 {}" },
+                            { id: "notosansmono", name: "Noto Sans Mono",  stack: '"Noto Sans Mono",monospace',    preview: "Aa 01 {}" },
                         ];
 
                         var MIN_SIZE = 10, MAX_SIZE = 22;
 
-                        function getActiveFontId()   { return localStorage.getItem(LS_FONT) || "system"; }
+                        function getActiveFontId()   { return localStorage.getItem(LS_FONT) || "geistmono"; }
                         function getActiveFontSize() { return parseInt(localStorage.getItem(LS_FONTSIZE) || "14", 10); }
 
                         function applyFont(fontId, size) {
@@ -4527,6 +4584,48 @@
                         }
 
                         renderFontDrop();
+
+                        /* ── Smart positioning font dropdown ── */
+                        (function() {
+                            var wrap = document.getElementById("bfont-wrap");
+                            var drop = document.getElementById("fontdrop");
+                            var hideTimer = null;
+
+                            function showDrop() {
+                                clearTimeout(hideTimer);
+                                drop.classList.add("show");
+
+                                var wRect = wrap.getBoundingClientRect();
+                                var dW    = drop.offsetWidth || 200;
+                                var dH    = drop.offsetHeight || 300;
+                                var gap   = 4;
+                                var pad   = 8;
+
+                                /* Vertikal: bawah tombol, naik kalau mepet bawah */
+                                var top = wRect.bottom + gap;
+                                if (top + dH > window.innerHeight - pad) {
+                                    top = wRect.top - dH - gap;
+                                }
+
+                                /* Horisontal: center di tombol, clamp ke viewport */
+                                var left = wRect.left + (wRect.width / 2) - (dW / 2);
+                                left = Math.max(pad, Math.min(left, window.innerWidth - dW - pad));
+
+                                drop.style.top  = top  + "px";
+                                drop.style.left = left + "px";
+                            }
+
+                            function hideDrop() {
+                                hideTimer = setTimeout(function() {
+                                    drop.classList.remove("show");
+                                }, 120);
+                            }
+
+                            wrap.addEventListener("mouseenter", showDrop);
+                            wrap.addEventListener("mouseleave", hideDrop);
+                            drop.addEventListener("mouseenter", function() { clearTimeout(hideTimer); });
+                            drop.addEventListener("mouseleave", hideDrop);
+                        })();
 
                         /* Apply saved font on startup */
                         /* Use setTimeout to ensure CodeMirror is ready */
