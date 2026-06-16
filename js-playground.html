@@ -43,7 +43,7 @@
                 --f1: #8a9ab0;
                 --f2: #91beea;
                 --f3: #90aac8;
-                --f4: #31508b;
+                --f4: #6079a9;
                 /* ── Default: warna kode syntax ── */
                 --pur: #7ad8cc;   /* Keyword */
                 --blu: #4faaff;   /* Variabel */
@@ -1257,6 +1257,19 @@
             .CodeMirror-foldgutter-folded:after {
                 content: "\25B8";
             }
+
+            /* ── Indent Guide Lines ── */
+            .CodeMirror-code {
+                position: relative;
+            }
+            /* Canvas overlay tepat di atas code area, pointer-events:none */
+            #ig-canvas {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 2;
+                overflow: hidden;
+            }
             .CodeMirror-hints {
                 background: var(--b0s);
                 border: 1px solid var(--b2);
@@ -1840,6 +1853,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/comment-fold.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.0.3/standalone.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.0.3/parser-babel.min.js"></script>
 
@@ -1852,9 +1866,10 @@
                     rigid: false,
                     wordWrap: false,
                 };
-                var arTimer = null,
-                    wdTimer = null,
-                    lastRun = 0;
+                var arTimer  = null,
+                    wdTimer  = null, // ! watchdog infinite-loop timer
+                    fsTimer  = null, // ! autosave file system timer
+                    lastRun  = 0;
 
                 var STARTER = [
                     "// JS Playground — Dark Blue Edition",
@@ -2128,6 +2143,8 @@
                             if (c.somethingSelected()) c.indentSelection("add");
                             else c.replaceSelection("  ");
                         },
+                        "Ctrl-/": function (c) { c.toggleComment({ indent: true }); },
+                        "Cmd-/":  function (c) { c.toggleComment({ indent: true }); },
                     },
                     hintOptions: { hint: customHint, completeSingle: false },
                 });
@@ -2143,8 +2160,8 @@
                 });
                 var lastCode = cm.getValue().replace(/\s+/g, "");
                 cm.on("change", function () {
-                    clearTimeout(wdTimer);
-                    wdTimer = setTimeout(function () {
+                    clearTimeout(fsTimer);
+                    fsTimer = setTimeout(function () {
                         localStorage.setItem("jspg_code", cm.getValue());
                     }, 500);
                     if (state.autoRun) {
@@ -2155,6 +2172,156 @@
                         arTimer = setTimeout(runCode, 700);
                     }
                 });
+
+                /* ── Indent Guide Lines — canvas overlay ── */
+                (function () {
+                    var igTimer;
+                    var TAB = cm.getOption("indentUnit") || 2;
+
+                    var scrollEl = cm.getScrollerElement();
+                    var cvs = document.createElement("canvas");
+                    cvs.style.cssText = "position:absolute;top:0;left:0;pointer-events:none;z-index:3;";
+                    scrollEl.appendChild(cvs);
+                    var ctx = cvs.getContext("2d");
+
+                    // Cari scope bracket { } [ ] ( ) yang mengurung cursor
+                    function findActiveScopes(cursor) {
+                        var doc = cm.getDoc();
+                        var src = doc.getValue();
+                        var ci  = doc.indexFromPos(cursor);
+                        var ops = ["{","[","("], cls = ["}","]",")"];
+                        var stack = [], result = [];
+                        for (var i = 0; i < src.length; i++) {
+                            var oi = ops.indexOf(src[i]), ki = cls.indexOf(src[i]);
+                            if (oi !== -1) { stack.push({ c: src[i], i: i }); }
+                            else if (ki !== -1 && stack.length) {
+                                var top = stack[stack.length - 1];
+                                if (ops.indexOf(top.c) === ki) {
+                                    stack.pop();
+                                    if (top.i < ci && i >= ci) {
+                                        var fp = doc.posFromIndex(top.i);
+                                        var tp = doc.posFromIndex(i);
+                                        if (tp.line > fp.line)
+                                            result.push({ fromLine: fp.line, toLine: tp.line, col: fp.ch });
+                                    }
+                                }
+                            }
+                        }
+                        return result;
+                    }
+
+                    function draw() {
+                        var si   = cm.getScrollInfo();
+                        var W    = si.width;
+                        var H    = si.height;
+                        var dpr  = window.devicePixelRatio || 1;
+
+                        cvs.style.width  = W + "px";
+                        cvs.style.height = H + "px";
+                        cvs.width  = Math.round(W * dpr);
+                        cvs.height = Math.round(H * dpr);
+                        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                        ctx.clearRect(0, 0, W, H);
+
+                        var cursor  = cm.getCursor();
+                        var actives = findActiveScopes(cursor);
+
+                        // activeCol[col] = [{fromLine, toLine}] untuk scope aktif
+                        var activeCols = {};
+                        actives.forEach(function(r) {
+                            if (!activeCols[r.col]) activeCols[r.col] = [];
+                            activeCols[r.col].push({ fromLine: r.fromLine, toLine: r.toLine });
+                        });
+
+                        var charW  = cm.defaultCharWidth();
+                        var gutW   = cm.getGutterElement().offsetWidth;
+                        var total  = cm.lineCount();
+                        var wrapEl = cm.getWrapperElement();
+                        var wrapTop = wrapEl.getBoundingClientRect().top;
+
+                        // ── Pass 1: hitung indent tiap baris & Y coords ──
+                        // Simpan sebagai array supaya bisa di-group
+                        var lines = []; // { indent, top, bottom }
+                        for (var ln = 0; ln < total; ln++) {
+                            var lineText = cm.getLine(ln);
+                            if (lineText === null) { lines.push(null); continue; }
+
+                            var indent = 0;
+                            if (lineText.trim() !== "") {
+                                while (indent < lineText.length && lineText[indent] === " ") indent++;
+                            } else {
+                                // Baris kosong — interpolasi dari tetangga
+                                var pi = 0, ni = 0;
+                                for (var a = ln - 1; a >= Math.max(0, ln - 10); a--) {
+                                    var pl = cm.getLine(a);
+                                    if (pl && pl.trim()) { var c = 0; while (c < pl.length && pl[c] === " ") c++; pi = c; break; }
+                                }
+                                for (var b = ln + 1; b <= Math.min(total - 1, ln + 10); b++) {
+                                    var nl = cm.getLine(b);
+                                    if (nl && nl.trim()) { var c = 0; while (c < nl.length && nl[c] === " ") c++; ni = c; break; }
+                                }
+                                indent = Math.max(pi, ni);
+                            }
+
+                            var coords = cm.charCoords({ line: ln, ch: 0 }, "page");
+                            var lineTop    = coords.top    - wrapTop + si.top;
+                            var lineBottom = coords.bottom - wrapTop + si.top;
+                            lines.push({ indent: indent, top: lineTop, bottom: lineBottom });
+                        }
+
+                        // ── Pass 2: per kolom indent, kumpulkan segmen baris berurutan ──
+                        // Cari semua kolom yang pernah muncul
+                        var maxIndent = 0;
+                        lines.forEach(function(l) { if (l && l.indent > maxIndent) maxIndent = l.indent; });
+
+                        for (var col = TAB; col <= maxIndent; col += TAB) {
+                            // Kumpulkan run: baris berurutan yang punya indent >= col
+                            var runs = []; // [{topY, bottomY, active}]
+                            var runStart = null;
+
+                            for (var ln2 = 0; ln2 < lines.length; ln2++) {
+                                var l = lines[ln2];
+                                var hasLevel = l && l.indent >= col;
+                                if (hasLevel) {
+                                    if (runStart === null) runStart = { topY: l.top, bottomY: l.bottom, ln: ln2 };
+                                    else runStart.bottomY = l.bottom;
+                                    runStart.endLn = ln2;
+                                } else {
+                                    if (runStart !== null) { runs.push(runStart); runStart = null; }
+                                }
+                            }
+                            if (runStart !== null) runs.push(runStart);
+
+                            // Render tiap run sebagai satu garis vertikal panjang
+                            var x = gutW + (col - TAB) * charW + Math.floor(charW / 2) + 0.5;
+
+                            runs.forEach(function(run) {
+                                // Cek apakah run ini overlap dengan scope aktif di kolom ini
+                                var isAct = false;
+                                if (activeCols[col - TAB]) {
+                                    activeCols[col - TAB].forEach(function(r) {
+                                        if (r.fromLine <= run.endLn && r.toLine >= run.ln) isAct = true;
+                                    });
+                                }
+
+                                ctx.beginPath();
+                                ctx.moveTo(x, run.topY);
+                                ctx.lineTo(x, run.bottomY);
+                                ctx.strokeStyle = isAct ? "rgba(107,128,215,0.75)" : "rgba(77,96,128,0.3)";
+                                ctx.lineWidth   = isAct ? 1.5 : 1;
+                                ctx.stroke();
+                            });
+                        }
+                    }
+
+                    function schedule() { clearTimeout(igTimer); igTimer = setTimeout(draw, 60); }
+                    cm.on("change",         schedule);
+                    cm.on("cursorActivity", schedule);
+                    cm.on("scroll",         schedule);
+                    cm.on("viewportChange", schedule);
+                    window.addEventListener("resize", schedule);
+                    setTimeout(draw, 500);
+                })();
 
                 /* ── Sandbox ── */
                 function buildHTML(code) {
@@ -2591,80 +2758,55 @@
 
                 /* ── Konversi warna HEX <-> HSL (untuk slider tema) ── */
                 function hexToHsl(hex) {
-                    hex = (hex || "#888888").replace("#", "");
-                    if (hex.length === 3)
-                        hex = hex
-                            .split("")
-                            .map(function (c) {
-                                return c + c;
-                            })
-                            .join("");
-                    var r = parseInt(hex.substr(0, 2), 16) / 255,
-                        g = parseInt(hex.substr(2, 2), 16) / 255,
-                        b = parseInt(hex.substr(4, 2), 16) / 255;
-                    var max = Math.max(r, g, b),
-                        min = Math.min(r, g, b);
-                    var h = 0,
-                        s = 0,
-                        l = (max + min) / 2;
+                    // ! mastiin string valid
+                    if (!hex || typeof hex !== "string") return { h: 0, s: 0, l: 53 };
+                    hex = hex.replace("#", "");
+                    // ! mastiin panjang hex valid (3 atau 6 digit)
+                    if (hex.length !== 3 && hex.length !== 6) return { h: 0, s: 0, l: 53 };
+                    // ? expand shorthand 3-digit ke 6-digit
+                    if (hex.length === 3) {
+                        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                    }
+                    var r = parseInt(hex.substr(0, 2), 16) / 255;
+                    var g = parseInt(hex.substr(2, 2), 16) / 255;
+                    var b = parseInt(hex.substr(4, 2), 16) / 255;
+                    var max = Math.max(r, g, b);
+                    var min = Math.min(r, g, b);
+                    var h = 0;
+                    var s = 0;
+                    var l = (max + min) / 2;
                     if (max !== min) {
                         var d = max - min;
+                        // ? saturasi tergantung lightness > 0.5 atau tidak
                         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
                         switch (max) {
-                            case r:
-                                h = (g - b) / d + (g < b ? 6 : 0);
-                                break;
-                            case g:
-                                h = (b - r) / d + 2;
-                                break;
-                            case b:
-                                h = (r - g) / d + 4;
-                                break;
+                            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                            case g: h = (b - r) / d + 2; break;
+                            case b: h = (r - g) / d + 4; break;
                         }
                         h *= 60;
                     }
                     return { h: h, s: s * 100, l: l * 100 };
                 }
                 function hslToHex(h, s, l) {
+                    // ! normalisasi input ke range valid
                     h = ((h % 360) + 360) % 360;
                     s = Math.max(0, Math.min(100, s)) / 100;
                     l = Math.max(0, Math.min(100, l)) / 100;
-                    var c = (1 - Math.abs(2 * l - 1)) * s,
-                        x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
-                        m = l - c / 2,
-                        r = 0,
-                        g = 0,
-                        b = 0;
-                    if (h < 60) {
-                        r = c;
-                        g = x;
-                        b = 0;
-                    } else if (h < 120) {
-                        r = x;
-                        g = c;
-                        b = 0;
-                    } else if (h < 180) {
-                        r = 0;
-                        g = c;
-                        b = x;
-                    } else if (h < 240) {
-                        r = 0;
-                        g = x;
-                        b = c;
-                    } else if (h < 300) {
-                        r = x;
-                        g = 0;
-                        b = c;
-                    } else {
-                        r = c;
-                        g = 0;
-                        b = x;
-                    }
+                    var c = (1 - Math.abs(2 * l - 1)) * s;
+                    var x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+                    var m = l - c / 2;
+                    var r = 0;
+                    var g = 0;
+                    var b = 0;
+                    if (h < 60)       { r = c; g = x; b = 0; }
+                    else if (h < 120) { r = x; g = c; b = 0; }
+                    else if (h < 180) { r = 0; g = c; b = x; }
+                    else if (h < 240) { r = 0; g = x; b = c; }
+                    else if (h < 300) { r = x; g = 0; b = c; }
+                    else              { r = c; g = 0; b = x; }
                     function toHex(v) {
-                        var n = Math.max(
-                            0,
-                            Math.min(255, Math.round((v + m) * 255)),
-                        );
+                        var n = Math.max(0, Math.min(255, Math.round((v + m) * 255)));
                         return n.toString(16).padStart(2, "0");
                     }
                     return "#" + toHex(r) + toHex(g) + toHex(b);
@@ -2821,12 +2963,11 @@
 
                     /* Arsip: [{name, code}] */
                     function loadArchive() {
+                        // ! try-catch mastiin parse JSON tidak crash
                         try {
-                            return JSON.parse(
-                                localStorage.getItem(LS_ARCHIVE) || "[]",
-                            );
+                            return JSON.parse(localStorage.getItem(LS_ARCHIVE) || "[]");
                         } catch (e) {
-                            return [];
+                            return []; // [] jika data corrupt
                         }
                     }
                     function saveArchive(arr) {
@@ -2839,13 +2980,14 @@
                     }
 
                     function switchTo(name) {
+                        // ! simpan dulu sebelum pindah
                         saveActive();
                         active = name;
                         localStorage.setItem(LS_ACTIVE, active);
                         var code = localStorage.getItem(LSC(active));
+                        // ? kalau file kosong / baru, isi dengan string kosong
                         cm.setValue(code !== null ? code : "");
-                        document.getElementById("bfile-label").textContent =
-                            active;
+                        document.getElementById("bfile-label").textContent = active;
                         renderDrop();
                         cm.focus();
                     }
@@ -2863,30 +3005,28 @@
 
                     /* Hapus → arsip, bukan hapus beneran */
                     function archiveFile(name) {
-                        if (files.length === 1)
-                            return; /* jangan arsip file terakhir */
+                        // ! jangan arsip kalau file terakhir
+                        if (files.length === 1) return;
                         saveActive();
                         var code = localStorage.getItem(LSC(name)) || "";
                         var arc = loadArchive();
                         /* hindari duplikat nama di arsip */
                         var arcName = name;
                         var cnt = 1;
-                        while (
-                            arc.some(function (a) {
-                                return a.name === arcName;
-                            })
-                        ) {
+                        while (arc.some(function (a) { return a.name === arcName; })) {
                             arcName = name + "-" + ++cnt;
                         }
                         arc.push({ name: arcName, code: code });
                         saveArchive(arc);
-                        files = files.filter(function (f) {
-                            return f !== name;
-                        });
+                        files = files.filter(function (f) { return f !== name; });
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
                         localStorage.removeItem(LSC(name));
-                        if (active === name) switchTo(files[0]);
-                        else renderDrop();
+                        // ? kalau file yang diarsip adalah aktif, pindah ke file pertama
+                        if (active === name) {
+                            switchTo(files[0]);
+                        } else {
+                            renderDrop();
+                        }
                     }
 
                     /* Kembalikan dari arsip ke daftar file */
@@ -2900,12 +3040,14 @@
                             }
                             return true;
                         });
+                        // ! kalau item tidak ditemukan di arsip, hentikan
                         if (!item) return;
                         saveArchive(arc);
                         var finalName = arcName;
                         var cnt2 = 1;
-                        while (files.indexOf(finalName) !== -1)
+                        while (files.indexOf(finalName) !== -1) {
                             finalName = arcName + "-" + ++cnt2;
+                        }
                         files.push(finalName);
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
                         localStorage.setItem(LSC(finalName), item.code);
@@ -2915,6 +3057,7 @@
 
                     /* Hapus permanen dari arsip */
                     function permDeleteFile(arcName) {
+                        // ! filter dulu, baru simpan — tidak ada eksekusi sebelum filter
                         var arc = loadArchive().filter(function (a) {
                             return a.name !== arcName;
                         });
@@ -2927,24 +3070,20 @@
                             .trim()
                             .replace(/[^a-zA-Z0-9_\-. ]/g, "")
                             .slice(0, 32);
-                        if (
-                            !newName ||
-                            newName === oldName ||
-                            files.indexOf(newName) !== -1
-                        )
+                        // ! mastiin nama valid, beda dari sekarang, dan belum ada duplikat
+                        if (!newName || newName === oldName || files.indexOf(newName) !== -1) {
                             return oldName;
+                        }
                         var code = localStorage.getItem(LSC(oldName)) || "";
-                        files = files.map(function (f) {
-                            return f === oldName ? newName : f;
-                        });
+                        files = files.map(function (f) { return f === oldName ? newName : f; });
                         localStorage.setItem(LS_INDEX, JSON.stringify(files));
                         localStorage.setItem(LSC(newName), code);
                         localStorage.removeItem(LSC(oldName));
+                        // ? kalau yang di-rename adalah file aktif, update label
                         if (active === oldName) {
                             active = newName;
                             localStorage.setItem(LS_ACTIVE, active);
-                            document.getElementById("bfile-label").textContent =
-                                active;
+                            document.getElementById("bfile-label").textContent = active;
                         }
                         return newName;
                     }
@@ -3135,8 +3274,8 @@
                     renderDrop();
 
                     cm.on("change", function () {
-                        clearTimeout(window._fsSaveTimer);
-                        window._fsSaveTimer = setTimeout(saveActive, 500);
+                        clearTimeout(fsTimer);
+                        fsTimer = setTimeout(saveActive, 500);
                     });
                 })();
 
@@ -3195,7 +3334,7 @@
                                 f1: "#8a9ab0",
                                 f2: "#91beea",
                                 f3: "#90aac8",
-                                f4: "#31508b",
+                                f4: "#6079a9",
                                 red: "#9070b0",
                                 green: "#9292fa",
                                 yel: "#d95cff",
@@ -3257,30 +3396,30 @@
                     ];
 
                     function loadCustomThemes() {
+                        // ! try-catch mastiin parse JSON tidak crash
                         try {
-                            return JSON.parse(
-                                localStorage.getItem(LS_THEMES) || "[]",
-                            );
+                            return JSON.parse(localStorage.getItem(LS_THEMES) || "[]");
                         } catch (e) {
-                            return [];
+                            return []; // [] jika data corrupt
                         }
                     }
                     function saveCustomThemes(list) {
                         localStorage.setItem(LS_THEMES, JSON.stringify(list));
                     }
                     function getAllThemes() {
-                        return [
-                            BUILTIN_THEMES.ocean,
-                        ].concat(loadCustomThemes());
+                        return [BUILTIN_THEMES.ocean].concat(loadCustomThemes());
                     }
                     function getActiveThemeId() {
                         return localStorage.getItem(LS_ACTIVE_THEME) || "ocean";
                     }
                     function resolveTheme(id) {
+                        // ! mastiin id ada sebelum cari
+                        if (!id) return BUILTIN_THEMES.ocean;
                         var all = getAllThemes();
                         for (var i = 0; i < all.length; i++) {
                             if (all[i].id === id) return all[i];
                         }
+                        // null scenario: id tidak ditemukan → fallback ke ocean
                         return BUILTIN_THEMES.ocean;
                     }
 
@@ -3326,11 +3465,19 @@
 
                     /* Helper hex → {r,g,b} */
                     function hexToRgb(hex) {
+                        // ! mastiin string valid dulu
+                        if (!hex || typeof hex !== "string") return null;
                         hex = hex.replace(/^#/, "");
+                        // ? expand shorthand 3-digit ke 6-digit
                         if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
                         var n = parseInt(hex, 16);
+                        // ! mastiin hasil parseInt valid
                         if (isNaN(n)) return null;
-                        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+                        return {
+                            r: (n >> 16) & 255,
+                            g: (n >> 8) & 255,
+                            b: n & 255,
+                        };
                     }
 
                     /* ── Dropdown daftar tema ── */
@@ -3362,17 +3509,15 @@
                             row.appendChild(lbl);
 
                             if (!theme.builtin) {
-                                /* Rename inline — dideklarasi dulu sebelum dipakai */
-                                function startThemeRename() {
+                                /* Rename inline — var agar aman di strict mode dalam loop */
+                                var startThemeRename = function () {
                                     lbl.contentEditable = "true";
                                     lbl.focus();
                                     var rng = document.createRange();
                                     rng.selectNodeContents(lbl);
                                     window.getSelection().removeAllRanges();
                                     window.getSelection().addRange(rng);
-                                }
-
-                                /* Double-click nama → rename */
+                                };
                                 lbl.addEventListener("dblclick", function (e) {
                                     e.stopPropagation();
                                     startThemeRename();
@@ -3487,12 +3632,11 @@
 
                     var LS_THEME_ARC = "jspg_theme_archive";
                     function loadThemeArchive() {
+                        // ! try-catch mastiin parse JSON tidak crash
                         try {
-                            return JSON.parse(
-                                localStorage.getItem(LS_THEME_ARC) || "[]",
-                            );
+                            return JSON.parse(localStorage.getItem(LS_THEME_ARC) || "[]");
                         } catch (e) {
-                            return [];
+                            return []; // [] jika data corrupt
                         }
                     }
                     function saveThemeArchive(arr) {
@@ -3509,14 +3653,15 @@
                             }
                             return true;
                         });
+                        // ! kalau id tidak ditemukan, hentikan
                         if (!found) return;
                         saveCustomThemes(custom);
                         var arc = loadThemeArchive();
                         arc.push(found);
                         saveThemeArchive(arc);
-                        if (getActiveThemeId() === id)
-                            applyTheme(BUILTIN_THEMES.ocean);
-                        renderThemeDrop(); /* Fix: update UI setelah arsip */
+                        // ? kalau tema aktif yang diarsip, fallback ke ocean
+                        if (getActiveThemeId() === id) applyTheme(BUILTIN_THEMES.ocean);
+                        renderThemeDrop();
                     }
 
                     function restoreTheme(id) {
@@ -3529,6 +3674,7 @@
                             }
                             return true;
                         });
+                        // ! kalau tema tidak ada di arsip, hentikan
                         if (!found) return;
                         saveThemeArchive(arc);
                         var custom = loadCustomThemes();
@@ -3539,11 +3685,13 @@
                     }
 
                     function permDeleteTheme(id) {
+                        // ! filter dulu, baru simpan
                         var arc = loadThemeArchive().filter(function (t) {
                             return t.id !== id;
                         });
                         saveThemeArchive(arc);
                         renderThemeArchivePanel();
+                        renderThemeDrop(); // ! sync angka di dropdown tema setelah hapus
                     }
 
                     function openThemeArchivePanel() {
@@ -4017,14 +4165,18 @@
                     }
 
                     function saveTheme() {
-                        var name =
-                            document
-                                .getElementById("thed-name")
-                                .textContent.trim()
-                                .slice(0, 32) || "Tema";
+                        var name = document
+                            .getElementById("thed-name")
+                            .textContent.trim()
+                            .slice(0, 32) || "Tema";
                         var custom = loadCustomThemes();
                         var id = editingThemeId || "custom-" + Date.now();
-                        var themeObj = { id: id, name: name, colors: {} };
+                        // ? bangun object tema secara eksplisit
+                        var themeObj = {
+                            id: id,
+                            name: name,
+                            colors: {},
+                        };
                         THEME_VAR_KEYS.forEach(function (k) {
                             themeObj.colors[k] = editorColors[k];
                         });
@@ -4048,6 +4200,8 @@
 
                     /* Urutan slot editor mengikuti urutan visual COLOR_GROUPS */
                     function getOrderedEditorKeys() {
+                        // ! mastiin COLOR_GROUPS ada dan bukan array kosong
+                        if (!Array.isArray(COLOR_GROUPS) || !COLOR_GROUPS.length) return [];
                         var keys = [];
                         COLOR_GROUPS.forEach(function (g) {
                             g.keys.forEach(function (item) { keys.push(item.k); });
@@ -4057,6 +4211,8 @@
 
                     /* Ekstrak semua warna (HEX / RGB / RGBA) dari teks, top-to-bottom */
                     function extractColorsFromText(text) {
+                        // ! mastiin input string valid
+                        if (!text || typeof text !== "string") return [];
                         var colors = [];
                         /* Gabungan: #xxx, #xxxxxx, #xxxxxxxx, rgb(...), rgba(...) */
                         var re = /#([0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b|rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)/gi;
@@ -4075,7 +4231,7 @@
                                 colors.push("#" + toHH(parseInt(m[2])) + toHH(parseInt(m[3])) + toHH(parseInt(m[4])));
                             }
                         }
-                        return colors;
+                        return colors; // []
                     }
 
                     /* Terapkan satu hex ke slot [key]: update closure via hexInput dispatch */
