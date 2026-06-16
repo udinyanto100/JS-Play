@@ -2541,11 +2541,48 @@
                     return words || "(log)";
                 }
 
+                function shortValStr(n, maxChars) {
+                    var s;
+                    switch (n.t) {
+                        case "string":
+                            s = n.v;
+                            break;
+                        case "number":
+                        case "boolean":
+                        case "bigint":
+                            s = String(n.v);
+                            break;
+                        case "null":
+                            s = "null";
+                            break;
+                        case "undefined":
+                            s = "undefined";
+                            break;
+                        default:
+                            s = previewOf(n).replace(/^"(.*)"$/, "$1");
+                    }
+                    s = String(s);
+                    return s.length > maxChars ? s.slice(0, maxChars) + "…" : s;
+                }
+
+                function objectPreviewLabel(n) {
+                    // Ambil beberapa key:value pertama, dipersingkat
+                    if (n.entries && n.entries.length) {
+                        var parts = n.entries.slice(0, 2).map(function (e) {
+                            return e[0] + ": " + shortValStr(e[1], 10);
+                        });
+                        var label = parts.join(", ");
+                        if (n.entries.length > 2) label += "…";
+                        return (n.ctor ? n.ctor + " " : "") + label;
+                    }
+                    return (n.ctor ? n.ctor + " " : "") + "{}";
+                }
+
                 function labelOf(n) {
                     if (n.t === "array") return "Array(" + n.length + ")";
                     if (n.t === "map") return "Map(" + n.size + ")";
                     if (n.t === "set") return "Set(" + n.size + ")";
-                    return (n.ctor ? n.ctor + " " : "") + "{…}";
+                    return objectPreviewLabel(n);
                 }
 
                 function esc(s) {
